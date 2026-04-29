@@ -41,7 +41,7 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 - [x] Constantes: codigos IBGE (UF + municipio — priorizando MT), tabela CFOP, tabela CST/CSOSN, formas de pagamento
 - [x] Validacao de CNPJ e CPF
 - [x] Testes unitarios cobrindo geracao de XML (34 testes passando)
-- [ ] Validacao do XML contra XSD oficial da SEFAZ (movido para Fase 3)
+- [x] Validacao do XML contra XSD oficial da SEFAZ (movido para Fase 3)
 
 **Criterio de conclusao:** XML gerado passa na validacao contra XSD oficial da SEFAZ.
 
@@ -86,7 +86,7 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 - [x] `NodeHttpSefazTransport` com `node:https` e mTLS
 - [x] URLs dos webservices da SEFAZ MT (homologacao e producao)
-- [x] Mapeamento extensivel de URLs por UF e ambiente (modelo UF → Autorizador → URLs, 27 UFs mapeadas, apenas MT com URLs preenchidas)
+- [x] Mapeamento extensivel de URLs por UF e ambiente (modelo UF → Autorizador → URLs, 27 UFs mapeadas, todos os 14 autorizadores com URLs preenchidas)
 - [x] Montagem do envelope SOAP para o webservice `NFeAutorizacao4` (modo sincrono, `indSinc=1`)
 - [x] Parse da resposta SOAP (protocolo, status, motivo) via regex/string
 - [x] `ConsultProtocolUseCase` para consulta via `NFeConsultaProtocolo4` (extrai UF da chave de acesso)
@@ -98,6 +98,24 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ---
 
+## Fase 4.5: Distribuicao DFe (Consulta de NFe recebidas)
+
+**Status:** Pendente
+
+**Objetivo:** Permitir que uma empresa consulte NFes emitidas contra seu CNPJ via servico `NFeDistribuicaoDFe` do Ambiente Nacional.
+
+- [ ] URLs do servico `NFeDistribuicaoDFe` (AN — Ambiente Nacional, homologacao e producao)
+- [ ] Montagem do envelope SOAP para `NFeDistribuicaoDFe` (consulta por NSU, ultimo NSU, ou chave de acesso)
+- [ ] Parse da resposta (resumos `resNFe`, XMLs completos `procNFe`, paginacao via `ultNSU`/`maxNSU`)
+- [ ] Descompactacao dos documentos retornados (GZip base64)
+- [ ] `DistribuicaoDFeUseCase` com metodos para consulta por ultimo NSU e por chave
+- [ ] Tipos de retorno (`DFeDocument`, `DFeDistribuicaoResult`)
+- [ ] Testes unitarios com respostas mockadas
+
+**Criterio de conclusao:** Consulta de NFes recebidas funcionando em homologacao, com paginacao e descompactacao.
+
+---
+
 ## Fase 5: Fachada e API Publica
 
 **Status:** Pendente
@@ -105,7 +123,7 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 **Objetivo:** Integrar tudo na classe `NFeCore` e estabilizar a API publica.
 
 - [ ] `NFeCore.create()` com configuracao de providers
-- [ ] API fluente: `nfe.xml.generate()`, `nfe.xml.sign()`, `nfe.sefaz.transmit()`, `nfe.sefaz.consult()`
+- [ ] API fluente: `nfe.xml.generate()`, `nfe.xml.sign()`, `nfe.sefaz.transmit()`, `nfe.sefaz.consult()`, `nfe.sefaz.distribuicao()`
 - [ ] Emissao de eventos (sucesso, erro, rejeicao) para observabilidade
 - [ ] `index.ts` com exports publicos bem definidos
 - [ ] Documentacao de exemplos completos
@@ -120,9 +138,7 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual.
 
 ### Suporte a outros estados
-- Adicionar URLs de webservices para todos os estados (SP, RJ, MG, RS, etc.)
-- SVAN (Sefaz Virtual do Ambiente Nacional) para estados que nao tem SEFAZ propria
-- SVRS (Sefaz Virtual do Rio Grande do Sul)
+- ~~Adicionar URLs de webservices para todos os estados~~ (concluido na Fase 4 — todos os 14 autorizadores com URLs)
 - Testes de homologacao por estado
 
 ### Eventos NFe
@@ -131,7 +147,7 @@ Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual
 - Inutilizacao de numeracao
 
 ### Manifestacao do Destinatario
-- Consulta de NFe recebidas (distribuicao DFe)
+- ~~Consulta de NFe recebidas (distribuicao DFe)~~ (movido para Fase 4.5)
 - Confirmacao da operacao
 - Ciencia da operacao
 - Desconhecimento da operacao

@@ -12,6 +12,10 @@ declare module 'pdfkit' {
     rect(x: number, y: number, w: number, h: number): this;
     stroke(color: string): this;
     fill(color: string): this;
+    moveTo(x: number, y: number): this;
+    lineTo(x: number, y: number): this;
+    dash(length: number, options?: Record<string, unknown>): this;
+    undash(): this;
   }
   export default PDFDocument;
 }

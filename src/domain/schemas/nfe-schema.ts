@@ -4,6 +4,7 @@ import { destinatarioSchema } from './destinatario-schema';
 import { produtoSchema } from './produto-schema';
 import { transporteSchema } from './transporte-schema';
 import { pagamentoSchema } from './pagamento-schema';
+import { cobrancaSchema } from './cobranca-schema';
 
 export const nfeIdentificacaoSchema = z.object({
   naturezaOperacao: z.string().min(1).max(60),
@@ -50,6 +51,7 @@ export const nfeSchema = z.object({
   destinatario: destinatarioSchema,
   produtos: z.array(produtoSchema).min(1),
   transporte: transporteSchema,
+  cobranca: cobrancaSchema.optional(),
   pagamento: pagamentoSchema,
   informacoesComplementares: z.string().max(5000).optional(),
   informacoesFisco: z.string().max(2000).optional()

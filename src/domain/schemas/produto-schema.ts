@@ -23,6 +23,14 @@ export const cofinsSchema = z.object({
   valor: z.number().min(0).optional()
 });
 
+export const ipiSchema = z.object({
+  cst: z.string().length(2),
+  baseCalculo: z.number().min(0).optional(),
+  aliquota: z.number().min(0).optional(),
+  valor: z.number().min(0).optional(),
+  cEnq: z.string().max(3).optional()
+});
+
 export const produtoSchema = z.object({
   numero: z.int().min(1),
   codigo: z.string().min(1).max(60),
@@ -35,9 +43,13 @@ export const produtoSchema = z.object({
   valorUnitario: z.number().min(0),
   valorTotal: z.number().min(0),
   valorDesconto: z.number().min(0).optional(),
+  valorFrete: z.number().min(0).optional(),
+  valorSeguro: z.number().min(0).optional(),
+  outrasDespesas: z.number().min(0).optional(),
   ean: z.string().max(14).optional(),
   eanTributavel: z.string().max(14).optional(),
   icms: icmsSchema,
   pis: pisSchema,
-  cofins: cofinsSchema
+  cofins: cofinsSchema,
+  ipi: ipiSchema.optional()
 });

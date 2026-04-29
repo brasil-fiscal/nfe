@@ -3,6 +3,7 @@ import { DestinatarioProps } from './Destinatario';
 import { ProdutoProps } from './Produto';
 import { TransporteProps } from './Transporte';
 import { PagamentoProps } from './Pagamento';
+import { CobrancaProps } from './Cobranca';
 
 export type NFeIdentificacao = {
   readonly naturezaOperacao: string;
@@ -26,6 +27,7 @@ export type NFeProps = {
   readonly destinatario: DestinatarioProps;
   readonly produtos: ProdutoProps[];
   readonly transporte: TransporteProps;
+  readonly cobranca?: CobrancaProps;
   readonly pagamento: PagamentoProps;
   readonly informacoesComplementares?: string;
   readonly informacoesFisco?: string;
@@ -37,6 +39,7 @@ export class NFe {
   public readonly destinatario: DestinatarioProps;
   public readonly produtos: readonly ProdutoProps[];
   public readonly transporte: TransporteProps;
+  public readonly cobranca?: CobrancaProps;
   public readonly pagamento: PagamentoProps;
   public readonly informacoesComplementares?: string;
   public readonly informacoesFisco?: string;
@@ -52,6 +55,7 @@ export class NFe {
     this.destinatario = props.destinatario;
     this.produtos = Object.freeze([...props.produtos]);
     this.transporte = props.transporte;
+    this.cobranca = props.cobranca;
     this.pagamento = props.pagamento;
     this.informacoesComplementares = props.informacoesComplementares;
     this.informacoesFisco = props.informacoesFisco;

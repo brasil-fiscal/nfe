@@ -114,7 +114,7 @@ function buildManifestacaoResponse(cStat: string, xMotivo: string): string {
 
 function createNFe(transportResponse: string): NFeCore {
   const transport: SefazTransport = {
-    send: async (_req: SefazRequest) => ({ xml: transportResponse, statusCode: 200 })
+    send: async () => ({ xml: transportResponse, statusCode: 200 })
   };
   const certificate: CertificateProvider = {
     load: async () => fakeCert

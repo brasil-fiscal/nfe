@@ -19,9 +19,10 @@ export type {
 export type { EmitenteProps } from './domain/entities/Emitente';
 export type { DestinatarioProps } from './domain/entities/Destinatario';
 export type { EnderecoProps } from './domain/entities/Endereco';
-export type { ProdutoProps, ICMSProps, PISProps, COFINSProps } from './domain/entities/Produto';
-export type { TransporteProps } from './domain/entities/Transporte';
+export type { ProdutoProps, ICMSProps, PISProps, COFINSProps, IPIProps } from './domain/entities/Produto';
+export type { TransporteProps, VolumeProps, VeiculoTranspProps } from './domain/entities/Transporte';
 export type { PagamentoProps, FormaPagamentoProps } from './domain/entities/Pagamento';
+export type { CobrancaProps, FaturaProps, DuplicataProps } from './domain/entities/Cobranca';
 
 // Contracts
 export type {

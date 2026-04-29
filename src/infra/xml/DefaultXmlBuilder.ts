@@ -6,9 +6,10 @@ import { EnderecoProps } from '@nfe/domain/entities/Endereco';
 import { ProdutoProps } from '@nfe/domain/entities/Produto';
 import { TransporteProps } from '@nfe/domain/entities/Transporte';
 import { PagamentoProps } from '@nfe/domain/entities/Pagamento';
+import { CobrancaProps } from '@nfe/domain/entities/Cobranca';
 import { UF_CODES } from '@nfe/shared/constants/ibge-codes';
 import { generateAccessKey, generateNumericCode } from '@nfe/shared/helpers/access-key';
-import { tag, tagGroup, formatNumber, formatDate, padLeft } from './xml-helper';
+import { tag, tagGroup, formatNumber, formatDate } from './xml-helper';
 
 const NFE_VERSION = '4.00';
 const NFE_NAMESPACE = 'http://www.portalfiscal.inf.br/nfe';
@@ -39,8 +40,9 @@ export class DefaultXmlBuilder implements XmlBuilder {
     const emit = this.buildEmitente(nfe.emitente);
     const dest = this.buildDestinatario(nfe.destinatario);
     const det = this.buildProdutos(nfe.produtos);
-    const total = this.buildTotais(nfe.produtos);
+    const total = this.buildTotais(nfe);
     const transp = this.buildTransporte(nfe.transporte);
+    const cobr = this.buildCobranca(nfe.cobranca);
     const pag = this.buildPagamento(nfe.pagamento);
     const infAdic = this.buildInformacoesAdicionais(
       nfe.informacoesComplementares,
@@ -55,6 +57,7 @@ export class DefaultXmlBuilder implements XmlBuilder {
       det +
       total +
       transp +
+      cobr +
       pag +
       infAdic +
       '</infNFe>';
@@ -173,7 +176,10 @@ export class DefaultXmlBuilder implements XmlBuilder {
         tag('uTrib', prod.unidade) +
         tag('qTrib', formatNumber(prod.quantidade, 4)) +
         tag('vUnTrib', formatNumber(prod.valorUnitario, 10)) +
+        tag('vFrete', prod.valorFrete ? formatNumber(prod.valorFrete, 2) : undefined) +
+        tag('vSeg', prod.valorSeguro ? formatNumber(prod.valorSeguro, 2) : undefined) +
         tag('vDesc', prod.valorDesconto ? formatNumber(prod.valorDesconto, 2) : undefined) +
+        tag('vOutro', prod.outrasDespesas ? formatNumber(prod.outrasDespesas, 2) : undefined) +
         tag('indTot', '1')
     );
 
@@ -184,10 +190,11 @@ export class DefaultXmlBuilder implements XmlBuilder {
 
   private buildImpostos(prod: ProdutoProps): string {
     const icms = this.buildICMS(prod);
+    const ipi = this.buildIPI(prod);
     const pis = this.buildPIS(prod);
     const cofins = this.buildCOFINS(prod);
 
-    return tagGroup('imposto', icms + pis + cofins);
+    return tagGroup('imposto', icms + ipi + pis + cofins);
   }
 
   private buildICMS(prod: ProdutoProps): string {
@@ -308,24 +315,32 @@ export class DefaultXmlBuilder implements XmlBuilder {
     );
   }
 
-  private buildTotais(produtos: readonly ProdutoProps[]): string {
+  private buildTotais(nfe: NFeProps): string {
     let vProd = 0;
     let vDesc = 0;
+    let vFrete = 0;
+    let vSeg = 0;
+    let vOutro = 0;
     let vBC = 0;
     let vICMS = 0;
+    let vIPI = 0;
     let vPIS = 0;
     let vCOFINS = 0;
 
-    for (const prod of produtos) {
+    for (const prod of nfe.produtos) {
       vProd += prod.valorTotal;
       vDesc += prod.valorDesconto || 0;
+      vFrete += prod.valorFrete || 0;
+      vSeg += prod.valorSeguro || 0;
+      vOutro += prod.outrasDespesas || 0;
       vBC += prod.icms.baseCalculo || 0;
       vICMS += prod.icms.valor || 0;
+      vIPI += prod.ipi?.valor || 0;
       vPIS += prod.pis.valor || 0;
       vCOFINS += prod.cofins.valor || 0;
     }
 
-    const vNF = vProd - vDesc;
+    const vNF = vProd - vDesc + vFrete + vSeg + vIPI + vOutro;
 
     return tagGroup(
       'total',
@@ -343,15 +358,15 @@ export class DefaultXmlBuilder implements XmlBuilder {
           tag('vFCPST', '0.00') +
           tag('vFCPSTRet', '0.00') +
           tag('vProd', formatNumber(vProd, 2)) +
-          tag('vFrete', '0.00') +
-          tag('vSeg', '0.00') +
+          tag('vFrete', formatNumber(vFrete, 2)) +
+          tag('vSeg', formatNumber(vSeg, 2)) +
           tag('vDesc', formatNumber(vDesc, 2)) +
           tag('vII', '0.00') +
-          tag('vIPI', '0.00') +
+          tag('vIPI', formatNumber(vIPI, 2)) +
           tag('vIPIDevol', '0.00') +
           tag('vPIS', formatNumber(vPIS, 2)) +
           tag('vCOFINS', formatNumber(vCOFINS, 2)) +
-          tag('vOutro', '0.00') +
+          tag('vOutro', formatNumber(vOutro, 2)) +
           tag('vNF', formatNumber(vNF, 2))
       )
     );
@@ -371,10 +386,96 @@ export class DefaultXmlBuilder implements XmlBuilder {
       );
     }
 
+    let volumes = '';
+    if (transp.volumes) {
+      volumes = transp.volumes
+        .map((vol) =>
+          tagGroup(
+            'vol',
+            tag('qVol', vol.quantidade !== undefined ? String(vol.quantidade) : undefined) +
+              tag('esp', vol.especie) +
+              tag('marca', vol.marca) +
+              tag('nVol', vol.numeracao) +
+              tag('pesoL', vol.pesoLiquido !== undefined ? formatNumber(vol.pesoLiquido, 3) : undefined) +
+              tag('pesoB', vol.pesoBruto !== undefined ? formatNumber(vol.pesoBruto, 3) : undefined)
+          )
+        )
+        .join('');
+    }
+
+    let veiculo = '';
+    if (transp.veiculo) {
+      veiculo = tagGroup(
+        'veicTransp',
+        tag('placa', transp.veiculo.placa) +
+          tag('UF', transp.veiculo.uf) +
+          tag('RNTC', transp.veiculo.rntc)
+      );
+    }
+
     return tagGroup(
       'transp',
-      tag('modFrete', String(transp.modalidadeFrete)) + transportadora
+      tag('modFrete', String(transp.modalidadeFrete)) + transportadora + veiculo + volumes
     );
+  }
+
+  private buildIPI(prod: ProdutoProps): string {
+    if (!prod.ipi) return '';
+
+    const ipi = prod.ipi;
+    const cEnq = ipi.cEnq || '999';
+    const nonTaxable = ['01', '02', '03', '04', '05', '51', '52', '53', '54', '55'];
+
+    if (nonTaxable.includes(ipi.cst)) {
+      return tagGroup(
+        'IPI',
+        tag('cEnq', cEnq) +
+          tagGroup('IPINT', tag('CST', ipi.cst))
+      );
+    }
+
+    return tagGroup(
+      'IPI',
+      tag('cEnq', cEnq) +
+        tagGroup(
+          'IPITrib',
+          tag('CST', ipi.cst) +
+            tag('vBC', formatNumber(ipi.baseCalculo || 0, 2)) +
+            tag('pIPI', formatNumber(ipi.aliquota || 0, 2)) +
+            tag('vIPI', formatNumber(ipi.valor || 0, 2))
+        )
+    );
+  }
+
+  private buildCobranca(cobr?: CobrancaProps): string {
+    if (!cobr) return '';
+
+    let fat = '';
+    if (cobr.fatura) {
+      fat = tagGroup(
+        'fat',
+        tag('nFat', cobr.fatura.nFat) +
+          tag('vOrig', cobr.fatura.vOrig !== undefined ? formatNumber(cobr.fatura.vOrig, 2) : undefined) +
+          tag('vDesc', cobr.fatura.vDesc !== undefined ? formatNumber(cobr.fatura.vDesc, 2) : undefined) +
+          tag('vLiq', cobr.fatura.vLiq !== undefined ? formatNumber(cobr.fatura.vLiq, 2) : undefined)
+      );
+    }
+
+    let dups = '';
+    if (cobr.duplicatas) {
+      dups = cobr.duplicatas
+        .map((dup) =>
+          tagGroup(
+            'dup',
+            tag('nDup', dup.nDup) +
+              tag('dVenc', dup.dVenc) +
+              tag('vDup', formatNumber(dup.vDup, 2))
+          )
+        )
+        .join('');
+    }
+
+    return tagGroup('cobr', fat + dups);
   }
 
   private buildPagamento(pag: PagamentoProps): string {

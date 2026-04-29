@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { createVerify, createHash, X509Certificate } from 'node:crypto';
+import { createVerify, createHash } from 'node:crypto';
 import { DefaultXmlSigner } from '@nfe/infra/xml/DefaultXmlSigner';
 import { A1CertificateProvider } from '@nfe/infra/certificate/A1CertificateProvider';
 import { CertificateData } from '@nfe/contracts/CertificateProvider';

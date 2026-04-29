@@ -21,6 +21,14 @@ export type COFINSProps = {
   readonly valor?: number;
 };
 
+export type IPIProps = {
+  readonly cst: string;
+  readonly baseCalculo?: number;
+  readonly aliquota?: number;
+  readonly valor?: number;
+  readonly cEnq?: string;
+};
+
 export type ProdutoProps = {
   readonly numero: number;
   readonly codigo: string;
@@ -33,9 +41,13 @@ export type ProdutoProps = {
   readonly valorUnitario: number;
   readonly valorTotal: number;
   readonly valorDesconto?: number;
+  readonly valorFrete?: number;
+  readonly valorSeguro?: number;
+  readonly outrasDespesas?: number;
   readonly ean?: string;
   readonly eanTributavel?: string;
   readonly icms: ICMSProps;
   readonly pis: PISProps;
   readonly cofins: COFINSProps;
+  readonly ipi?: IPIProps;
 };

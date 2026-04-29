@@ -29,8 +29,21 @@ export function formatNumber(value: number, decimals: number): string {
   return value.toFixed(decimals);
 }
 
-export function formatDate(date: Date): string {
-  return date.toISOString().replace(/\.\d{3}Z$/, '-03:00');
+export function formatDate(date: Date, utcOffset: string = '-03:00'): string {
+  const sign = utcOffset.startsWith('+') ? 1 : -1;
+  const [h, m] = utcOffset.replace(/[+-]/, '').split(':').map(Number);
+  const offsetMs = sign * (h * 60 + m) * 60 * 1000;
+
+  const local = new Date(date.getTime() + offsetMs);
+
+  const yyyy = local.getUTCFullYear();
+  const MM = String(local.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(local.getUTCDate()).padStart(2, '0');
+  const hh = String(local.getUTCHours()).padStart(2, '0');
+  const mm = String(local.getUTCMinutes()).padStart(2, '0');
+  const ss = String(local.getUTCSeconds()).padStart(2, '0');
+
+  return `${yyyy}-${MM}-${dd}T${hh}:${mm}:${ss}${utcOffset}`;
 }
 
 export function padLeft(value: number | string, length: number): string {

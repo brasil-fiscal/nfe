@@ -88,12 +88,46 @@ export class DefaultXmlSigner implements XmlSigner {
         if (!idMatch) {
           throw new Error(`Atributo Id nao encontrado em <${tag}>`);
         }
-        return { elementName: tag, elementContent: match[0], id: idMatch[1] };
+        const element = this.propagateNamespaces(xml, match[0], tag);
+        return { elementName: tag, elementContent: element, id: idMatch[1] };
       }
     }
 
     throw new Error(
       `Nenhum elemento assinavel encontrado no XML. Esperado: ${SIGNABLE_ELEMENTS.join(', ')}`
+    );
+  }
+
+  /**
+   * Propaga namespaces herdados do elemento pai para o elemento filho.
+   * Necessario para C14N: o digest deve incluir namespaces efetivos.
+   */
+  private propagateNamespaces(xml: string, element: string, tagName: string): string {
+    const nsRegex = /xmlns(?::[\w]+)?="[^"]+"/g;
+
+    const parentNs: string[] = [];
+    const parentMatch = xml.match(new RegExp(`<[^>]*>(?=\\s*<${tagName})`)) ||
+      xml.match(new RegExp(`<[^>]*>(?=[\\s\\S]*<${tagName})`));
+    if (parentMatch) {
+      let m: RegExpExecArray | null;
+      while ((m = nsRegex.exec(parentMatch[0])) !== null) {
+        parentNs.push(m[0]);
+      }
+    }
+
+    if (parentNs.length === 0) return element;
+
+    const elementOpenMatch = element.match(new RegExp(`^<${tagName}([^>]*)>`));
+    if (!elementOpenMatch) return element;
+
+    const existingAttrs = elementOpenMatch[1];
+    const missingNs = parentNs.filter((ns) => !existingAttrs.includes(ns));
+
+    if (missingNs.length === 0) return element;
+
+    return element.replace(
+      new RegExp(`^<${tagName}`),
+      `<${tagName} ${missingNs.join(' ')}`
     );
   }
 }

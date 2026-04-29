@@ -6,6 +6,7 @@ import { NFeError } from '@nfe/shared/errors/NFeError';
 import { SefazRejectError } from '@nfe/shared/errors/SefazRejectError';
 import { getSefazUrl, ibgeToUf, SefazEnvironment } from '@nfe/shared/constants/sefaz-urls';
 import { extractSoapBody } from '@nfe/infra/sefaz/soap';
+import { formatDate } from '@nfe/infra/xml/xml-helper';
 import {
   buildCancelamentoXml,
   wrapEventoSoapEnvelope,
@@ -44,7 +45,7 @@ export class CancelaNFeUseCase {
     const uf = ibgeToUf(input.chaveAcesso.substring(0, 2));
     const cOrgao = input.chaveAcesso.substring(0, 2);
     const tpAmb: '1' | '2' = environment === 'production' ? '1' : '2';
-    const dhEvento = new Date().toISOString();
+    const dhEvento = formatDate(new Date());
 
     const eventoXml = buildCancelamentoXml(
       input.chaveAcesso, input.cnpj, cOrgao, tpAmb,

@@ -48,6 +48,9 @@ export function canonicalize(xml: string): string {
   // Remove whitespace between tags (but not inside text content)
   result = result.replace(/>\s+</g, '><');
 
+  // Expand self-closing tags (C14N requires <tag></tag>, not <tag/>)
+  result = result.replace(/<([a-zA-Z0-9:]+)([^>]*?)\/>/g, '<$1$2></$1>');
+
   // Trim leading/trailing whitespace
   result = result.trim();
 

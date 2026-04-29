@@ -6,6 +6,7 @@ import { NFeError } from '@nfe/shared/errors/NFeError';
 import { SefazRejectError } from '@nfe/shared/errors/SefazRejectError';
 import { getAnUrl, AnEnvironment } from '@nfe/shared/constants/sefaz-an-urls';
 import { extractSoapBody } from '@nfe/infra/sefaz/soap';
+import { formatDate } from '@nfe/infra/xml/xml-helper';
 import {
   buildManifestacaoXml,
   wrapManifestacaoSoapEnvelope,
@@ -64,7 +65,7 @@ export class ManifestacaoUseCase {
     const { certificate, transport, xmlSigner, environment } = this.deps;
     const cOrgao = '91'; // Codigo do orgao AN para manifestacao
     const tpAmb: '1' | '2' = environment === 'production' ? '1' : '2';
-    const dhEvento = new Date().toISOString();
+    const dhEvento = formatDate(new Date());
 
     const eventoXml = buildManifestacaoXml(
       tipo, input.chaveAcesso, input.cnpj, cOrgao,

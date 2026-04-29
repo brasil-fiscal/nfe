@@ -6,6 +6,7 @@ import { NFeError } from '@nfe/shared/errors/NFeError';
 import { SefazRejectError } from '@nfe/shared/errors/SefazRejectError';
 import { getSefazUrl, ibgeToUf, SefazEnvironment } from '@nfe/shared/constants/sefaz-urls';
 import { extractSoapBody } from '@nfe/infra/sefaz/soap';
+import { formatDate } from '@nfe/infra/xml/xml-helper';
 import {
   buildCartaCorrecaoXml,
   wrapEventoSoapEnvelope,
@@ -44,7 +45,7 @@ export class CartaCorrecaoUseCase {
     const uf = ibgeToUf(input.chaveAcesso.substring(0, 2));
     const cOrgao = input.chaveAcesso.substring(0, 2);
     const tpAmb: '1' | '2' = environment === 'production' ? '1' : '2';
-    const dhEvento = new Date().toISOString();
+    const dhEvento = formatDate(new Date());
     const nSeqEvento = input.sequencia ?? 1;
 
     const eventoXml = buildCartaCorrecaoXml(

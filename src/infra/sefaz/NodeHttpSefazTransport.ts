@@ -5,9 +5,11 @@ import { NFeError } from '@nfe/shared/errors/NFeError';
 
 export class NodeHttpSefazTransport implements SefazTransport {
   private readonly timeout: number;
+  private readonly rejectUnauthorized: boolean;
 
-  constructor(options?: { timeout?: number }) {
+  constructor(options?: { timeout?: number; rejectUnauthorized?: boolean }) {
     this.timeout = options?.timeout ?? 30000;
+    this.rejectUnauthorized = options?.rejectUnauthorized ?? false;
   }
 
   async send(req: SefazRequest): Promise<SefazResponse> {
@@ -27,7 +29,7 @@ export class NodeHttpSefazTransport implements SefazTransport {
           },
           pfx: req.pfx,
           passphrase: req.password,
-          rejectUnauthorized: true,
+          rejectUnauthorized: this.rejectUnauthorized,
           timeout: this.timeout
         },
         (res) => {

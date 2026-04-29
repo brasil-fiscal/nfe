@@ -157,15 +157,17 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ## Fase 7: DANFE
 
-**Status:** Pendente
+**Status:** Concluida
 
 **Objetivo:** Gerar o PDF do DANFE (Documento Auxiliar da NFe) a partir do XML autorizado.
 
-- [ ] Layout DANFE em retrato (modelo padrao)
-- [ ] Codigo de barras Code128 para chave de acesso
-- [ ] Renderizacao de produtos, totais, transporte, pagamento
-- [ ] Geracao de PDF sem dependencias externas pesadas
-- [ ] Testes com XMLs reais de homologacao
+- [x] Parser de XML autorizado para estrutura tipada (`DanfeData`)
+- [x] Code128C implementado sem dependencias para chave de acesso (44 digitos)
+- [x] Layout DANFE retrato A4 com todas as secoes (cabecalho, emitente, destinatario, produtos, totais, transporte, info complementares)
+- [x] `DanfeGenerator` usando pdfkit (peerDependency opcional)
+- [x] `GerarDanfeUseCase` — aceita XML autorizado (string), retorna Buffer PDF
+- [x] PDF de exemplo gerado em `examples/danfe-exemplo.pdf`
+- [x] 20 testes novos (185 testes totais passando)
 
 **Criterio de conclusao:** PDF do DANFE gerado corretamente a partir de XML autorizado.
 

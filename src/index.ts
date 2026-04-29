@@ -33,6 +33,15 @@ export { DefaultXmlBuilder } from './infra/xml/DefaultXmlBuilder';
 export { DefaultXmlSigner } from './infra/xml/DefaultXmlSigner';
 export { A1CertificateProvider } from './infra/certificate/A1CertificateProvider';
 export { XsdSchemaValidator } from './infra/schema/XsdSchemaValidator';
+export { NodeHttpSefazTransport } from './infra/sefaz/NodeHttpSefazTransport';
+
+// Use cases
+export { TransmitNFeUseCase } from './application/use-cases/TransmitNFeUseCase';
+export { ConsultProtocolUseCase } from './application/use-cases/ConsultProtocolUseCase';
+
+// SEFAZ URLs
+export { getSefazUrl, ibgeToUf, UF_AUTORIZADOR, AUTORIZADOR_URLS } from './shared/constants/sefaz-urls';
+export type { SefazService, SefazEnvironment, Autorizador } from './shared/constants/sefaz-urls';
 
 // Errors
 export { NFeError } from './shared/errors/NFeError';

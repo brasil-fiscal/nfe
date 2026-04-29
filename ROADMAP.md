@@ -78,19 +78,21 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ---
 
-## Fase 4: Transmissao para SEFAZ (proximo)
+## Fase 4: Transmissao para SEFAZ
 
-**Status:** Pendente
+**Status:** Concluida
 
 **Objetivo:** Enviar NFe assinada para a SEFAZ e processar a resposta.
 
-- [ ] `NodeHttpSefazTransport` com `node:https` e mTLS
-- [ ] URLs dos webservices da SEFAZ MT (homologacao e producao)
-- [ ] Mapeamento extensivel de URLs por UF e ambiente para suporte futuro a outros estados
-- [ ] Montagem do envelope SOAP para o webservice `NFeAutorizacao4`
-- [ ] Parse da resposta SOAP (protocolo, status, motivo)
-- [ ] `ConsultProtocolUseCase` para consulta via `NFeConsultaProtocolo4`
-- [ ] Tratamento de erros da SEFAZ (rejeicoes com codigo e motivo)
+- [x] `NodeHttpSefazTransport` com `node:https` e mTLS
+- [x] URLs dos webservices da SEFAZ MT (homologacao e producao)
+- [x] Mapeamento extensivel de URLs por UF e ambiente (modelo UF → Autorizador → URLs, 27 UFs mapeadas, apenas MT com URLs preenchidas)
+- [x] Montagem do envelope SOAP para o webservice `NFeAutorizacao4` (modo sincrono, `indSinc=1`)
+- [x] Parse da resposta SOAP (protocolo, status, motivo) via regex/string
+- [x] `ConsultProtocolUseCase` para consulta via `NFeConsultaProtocolo4` (extrai UF da chave de acesso)
+- [x] `TransmitNFeUseCase` que orquestra build → sign → envelope → envio → parse
+- [x] Tratamento de erros da SEFAZ (rejeicoes com codigo e motivo via `SefazRejectError`)
+- [x] 40 testes novos (97 testes totais passando)
 
 **Criterio de conclusao:** NFe transmitida com sucesso em ambiente de homologacao da SEFAZ MT.
 

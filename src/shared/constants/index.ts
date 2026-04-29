@@ -6,3 +6,10 @@ export {
   CFOP_ENTRADA_INTERESTADUAL
 } from './cfop';
 export { CST_ICMS, CSOSN, CST_PIS_COFINS, FORMA_PAGAMENTO } from './cst';
+export {
+  UF_AUTORIZADOR,
+  AUTORIZADOR_URLS,
+  getSefazUrl,
+  ibgeToUf
+} from './sefaz-urls';
+export type { SefazService, SefazEnvironment, Autorizador } from './sefaz-urls';

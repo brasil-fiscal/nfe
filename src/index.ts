@@ -1,4 +1,13 @@
 // Core
+export { NFeCore } from './core/NFeCore';
+export type {
+  NFeCoreConfig,
+  NFeAmbiente,
+  CancelaInput,
+  CartaCorrecaoInput,
+  InutilizaInput,
+  ManifestacaoInput
+} from './core/NFeCore';
 export type { NFeConfig, NFeEnvironment, TransmitResult, ConsultResult } from './core/types';
 
 // Domain entities

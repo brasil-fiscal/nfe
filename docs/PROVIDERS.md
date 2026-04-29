@@ -2,7 +2,7 @@
 
 A lib `@brasil-fiscal/nfe` usa o padrao Provider/Plugin. Cada integracao externa eh definida por um contrato (interface). Voce pode substituir qualquer implementacao padrao pela sua propria.
 
-## Contratos disponuveis
+## Contratos disponiveis
 
 | Contrato | Responsabilidade | Implementacao padrao |
 |----------|-----------------|---------------------|
@@ -17,20 +17,24 @@ A lib `@brasil-fiscal/nfe` usa o padrao Provider/Plugin. Cada integracao externa
 Exemplo: provider que carrega certificado de um cofre (vault).
 
 ```typescript
-import { CertificateProvider, CertificateData } from '@brasil-fiscal/nfe/contracts';
+import type { CertificateProvider, CertificateData } from '@brasil-fiscal/nfe';
 
 export class VaultCertificateProvider implements CertificateProvider {
-  constructor(private readonly vaultUrl: string, private readonly secretId: string) {}
+  constructor(
+    private readonly vaultUrl: string,
+    private readonly secretId: string
+  ) {}
 
   async load(): Promise<CertificateData> {
-    // Busca o certificado no vault
     const response = await fetch(`${this.vaultUrl}/secrets/${this.secretId}`);
     const secret = await response.json();
 
     return {
       pfx: Buffer.from(secret.pfx, 'base64'),
       password: secret.password,
-      notAfter: new Date(secret.expiresAt)
+      notAfter: new Date(secret.expiresAt),
+      privateKey: secret.privateKey,
+      certPem: secret.certPem
     };
   }
 }
@@ -39,10 +43,15 @@ export class VaultCertificateProvider implements CertificateProvider {
 Uso:
 
 ```typescript
-const nfe = NFeCore.create({
+import { TransmitNFeUseCase, DefaultXmlBuilder, DefaultXmlSigner, NodeHttpSefazTransport } from '@brasil-fiscal/nfe';
+
+const transmitir = new TransmitNFeUseCase({
+  xmlBuilder: new DefaultXmlBuilder(),
+  xmlSigner: new DefaultXmlSigner(),
   certificate: new VaultCertificateProvider('https://vault.empresa.com', 'cert-nfe'),
   transport: new NodeHttpSefazTransport(),
-  environment: 'production'
+  environment: 'production',
+  uf: 'MT'
 });
 ```
 
@@ -51,13 +60,12 @@ const nfe = NFeCore.create({
 Exemplo: provider que usa um proxy interno para comunicacao com a SEFAZ.
 
 ```typescript
-import { SefazTransport, SefazRequest, SefazResponse } from '@brasil-fiscal/nfe/contracts';
+import type { SefazTransport, SefazRequest, SefazResponse } from '@brasil-fiscal/nfe';
 
 export class ProxySefazTransport implements SefazTransport {
   constructor(private readonly proxyUrl: string) {}
 
   async send(request: SefazRequest): Promise<SefazResponse> {
-    // Envia via proxy interno ao inves de direto pra SEFAZ
     const response = await fetch(this.proxyUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -82,14 +90,14 @@ export class ProxySefazTransport implements SefazTransport {
 Exemplo: provider que gera XML usando uma lib externa.
 
 ```typescript
-import { XmlBuilder } from '@brasil-fiscal/nfe/contracts';
-import { NFe } from '@brasil-fiscal/nfe/domain';
+import type { XmlBuilder } from '@brasil-fiscal/nfe';
+import type { NFeProps } from '@brasil-fiscal/nfe';
 
 export class CustomXmlBuilder implements XmlBuilder {
-  build(nfe: NFe): string {
+  build(nfe: NFeProps): string {
     // Sua logica de geracao de XML
     // Deve retornar XML valido no layout SEFAZ 4.00
-    return xmlString;
+    return '<NFe>...</NFe>';
   }
 }
 ```

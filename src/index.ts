@@ -38,10 +38,14 @@ export { NodeHttpSefazTransport } from './infra/sefaz/NodeHttpSefazTransport';
 // Use cases
 export { TransmitNFeUseCase } from './application/use-cases/TransmitNFeUseCase';
 export { ConsultProtocolUseCase } from './application/use-cases/ConsultProtocolUseCase';
+export { DistribuicaoDFeUseCase } from './application/use-cases/DistribuicaoDFeUseCase';
+export type { DistribuicaoResult, DFeDocument } from './application/use-cases/DistribuicaoDFeUseCase';
 
 // SEFAZ URLs
 export { getSefazUrl, ibgeToUf, UF_AUTORIZADOR, AUTORIZADOR_URLS } from './shared/constants/sefaz-urls';
 export type { SefazService, SefazEnvironment, Autorizador } from './shared/constants/sefaz-urls';
+export { getAnUrl } from './shared/constants/sefaz-an-urls';
+export type { AnService, AnEnvironment } from './shared/constants/sefaz-an-urls';
 
 // Errors
 export { NFeError } from './shared/errors/NFeError';

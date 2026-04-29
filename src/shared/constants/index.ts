@@ -13,3 +13,5 @@ export {
   ibgeToUf
 } from './sefaz-urls';
 export type { SefazService, SefazEnvironment, Autorizador } from './sefaz-urls';
+export { getAnUrl } from './sefaz-an-urls';
+export type { AnService, AnEnvironment } from './sefaz-an-urls';

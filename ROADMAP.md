@@ -117,14 +117,64 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ---
 
-## Fase 5: Fachada e API Publica
+## Fase 5: Eventos NFe
+
+**Status:** Pendente
+
+**Objetivo:** Cancelamento, Carta de Correcao e Inutilizacao de numeracao via servico `RecepcaoEvento` da SEFAZ.
+
+- [ ] Envelope SOAP para `RecepcaoEvento4` (evento generico)
+- [ ] `CancelaNFeUseCase` — cancelamento de NFe (evento tipo 110111)
+- [ ] `CartaCorrecaoUseCase` — CC-e (evento tipo 110110)
+- [ ] `InutilizaNFeUseCase` — inutilizacao de numeracao via `NFeInutilizacao4`
+- [ ] Parse das respostas de eventos (protocolo, status)
+- [ ] Testes unitarios com respostas mockadas
+
+**Criterio de conclusao:** Cancelamento e CC-e funcionando em homologacao.
+
+---
+
+## Fase 6: Manifestacao do Destinatario
+
+**Status:** Pendente
+
+**Objetivo:** Permitir que o destinatario manifeste-se sobre NFes recebidas via `RecepcaoEvento` do AN.
+
+- [ ] Confirmacao da operacao (evento tipo 210200)
+- [ ] Ciencia da operacao (evento tipo 210210)
+- [ ] Desconhecimento da operacao (evento tipo 210220)
+- [ ] Operacao nao realizada (evento tipo 210240)
+- [ ] `ManifestacaoUseCase` com metodos para cada tipo de evento
+- [ ] Testes unitarios com respostas mockadas
+
+**Criterio de conclusao:** Manifestacao de todos os tipos funcionando em homologacao.
+
+---
+
+## Fase 7: DANFE
+
+**Status:** Pendente
+
+**Objetivo:** Gerar o PDF do DANFE (Documento Auxiliar da NFe) a partir do XML autorizado.
+
+- [ ] Layout DANFE em retrato (modelo padrao)
+- [ ] Codigo de barras Code128 para chave de acesso
+- [ ] Renderizacao de produtos, totais, transporte, pagamento
+- [ ] Geracao de PDF sem dependencias externas pesadas
+- [ ] Testes com XMLs reais de homologacao
+
+**Criterio de conclusao:** PDF do DANFE gerado corretamente a partir de XML autorizado.
+
+---
+
+## Fase 8: Fachada e API Publica
 
 **Status:** Pendente
 
 **Objetivo:** Integrar tudo na classe `NFeCore` e estabilizar a API publica.
 
 - [ ] `NFeCore.create()` com configuracao de providers
-- [ ] API fluente: `nfe.xml.generate()`, `nfe.xml.sign()`, `nfe.sefaz.transmit()`, `nfe.sefaz.consult()`, `nfe.sefaz.distribuicao()`
+- [ ] API fluente: `nfe.xml.generate()`, `nfe.xml.sign()`, `nfe.sefaz.transmit()`, `nfe.sefaz.consult()`, `nfe.sefaz.distribuicao()`, `nfe.sefaz.cancelar()`, `nfe.sefaz.cartaCorrecao()`, `nfe.danfe.generate()`
 - [ ] Emissao de eventos (sucesso, erro, rejeicao) para observabilidade
 - [ ] `index.ts` com exports publicos bem definidos
 - [ ] Documentacao de exemplos completos
@@ -142,18 +192,6 @@ Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual
 - ~~Adicionar URLs de webservices para todos os estados~~ (concluido na Fase 4 — todos os 14 autorizadores com URLs)
 - Testes de homologacao por estado
 
-### Eventos NFe
-- Cancelamento de NFe
-- Carta de correcao (CC-e)
-- Inutilizacao de numeracao
-
-### Manifestacao do Destinatario
-- ~~Consulta de NFe recebidas (distribuicao DFe)~~ (movido para Fase 4.5)
-- Confirmacao da operacao
-- Ciencia da operacao
-- Desconhecimento da operacao
-- Operacao nao realizada
-
 ### Outros documentos fiscais
 - `@brasil-fiscal/nfce` — NFCe (Nota Fiscal do Consumidor Eletronica)
 - `@brasil-fiscal/cte` — CTe (Conhecimento de Transporte Eletronico)
@@ -161,9 +199,6 @@ Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual
 
 ### Certificado A3
 - Suporte a smartcard/token via PKCS#11
-
-### DANFE
-- `@brasil-fiscal/danfe` — Geracao de PDF do DANFE
 
 ---
 

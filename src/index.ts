@@ -28,6 +28,11 @@ export type {
   ValidationError
 } from './contracts/SchemaValidator';
 
+// Infrastructure
+export { DefaultXmlBuilder } from './infra/xml/DefaultXmlBuilder';
+export { DefaultXmlSigner } from './infra/xml/DefaultXmlSigner';
+export { A1CertificateProvider } from './infra/certificate/A1CertificateProvider';
+
 // Errors
 export { NFeError } from './shared/errors/NFeError';
 export { SchemaValidationError } from './shared/errors/SchemaValidationError';

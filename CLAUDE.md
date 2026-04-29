@@ -4,7 +4,7 @@ Este arquivo ajuda AI agents (Claude, Copilot, Cursor, etc.) a entender e contri
 
 ## Resumo do Projeto
 
-`@brasil-fiscal/nfe` eh uma lib TypeScript para emissao de NFe (Nota Fiscal Eletronica) no Brasil. Ela gera XML, assina com certificado digital (A1), valida contra schemas da SEFAZ e transmite para a autoridade fiscal.
+`brasil-fiscal-nfe` eh uma lib TypeScript para emissao de NFe (Nota Fiscal Eletronica) no Brasil. Ela gera XML, assina com certificado digital (A1), valida contra schemas da SEFAZ e transmite para a autoridade fiscal.
 
 **Foco inicial: SEFAZ MT (Mato Grosso).** Todos os exemplos, testes e URLs da SEFAZ priorizam MT. A arquitetura suporta todos os estados — outras UFs serao adicionadas progressivamente.
 

@@ -1,4 +1,4 @@
-# Contributing to @brasil-fiscal/nfe
+# Contributing to brasil-fiscal-nfe
 
 Obrigado por considerar contribuir! Este guia explica como participar do projeto.
 

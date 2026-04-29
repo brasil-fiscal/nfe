@@ -1,4 +1,4 @@
-# Arquitetura — @brasil-fiscal/nfe
+# Arquitetura — brasil-fiscal-nfe
 
 ## Visao Geral
 

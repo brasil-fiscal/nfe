@@ -1,4 +1,4 @@
-# @brasil-fiscal/nfe
+# brasil-fiscal-nfe
 
 Lib open-source em TypeScript para emissao de **NFe (Nota Fiscal Eletronica)** no Brasil. Arquitetura limpa, zero dependencias de runtime, totalmente plugavel.
 
@@ -30,15 +30,15 @@ O ecossistema PHP tem o excelente [nfephp-org/sped-nfe](https://github.com/nfeph
 ### Instalacao
 
 ```bash
-npm install @brasil-fiscal/nfe
+npm install brasil-fiscal-nfe
 ```
 
 ### Uso basico
 
 ```typescript
-import { NFeCore } from '@brasil-fiscal/nfe';
-import { A1CertificateProvider } from '@brasil-fiscal/nfe/providers/certificate-a1';
-import { NodeHttpSefazTransport } from '@brasil-fiscal/nfe/providers/sefaz-node-http';
+import { NFeCore } from 'brasil-fiscal-nfe';
+import { A1CertificateProvider } from 'brasil-fiscal-nfe/providers/certificate-a1';
+import { NodeHttpSefazTransport } from 'brasil-fiscal-nfe/providers/sefaz-node-http';
 import { readFileSync } from 'node:fs';
 
 // 1. Configurar providers

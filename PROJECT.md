@@ -1,4 +1,4 @@
-# Projeto: @brasil-fiscal/nfe
+# Projeto: brasil-fiscal-nfe
 
 ## O que eh isso?
 

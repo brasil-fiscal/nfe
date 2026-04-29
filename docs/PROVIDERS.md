@@ -1,6 +1,6 @@
 # Providers — Como Criar Providers Customizados
 
-A lib `@brasil-fiscal/nfe` usa o padrao Provider/Plugin. Cada integracao externa eh definida por um contrato (interface). Voce pode substituir qualquer implementacao padrao pela sua propria.
+A lib `brasil-fiscal-nfe` usa o padrao Provider/Plugin. Cada integracao externa eh definida por um contrato (interface). Voce pode substituir qualquer implementacao padrao pela sua propria.
 
 ## Contratos disponuveis
 
@@ -17,7 +17,7 @@ A lib `@brasil-fiscal/nfe` usa o padrao Provider/Plugin. Cada integracao externa
 Exemplo: provider que carrega certificado de um cofre (vault).
 
 ```typescript
-import { CertificateProvider, CertificateData } from '@brasil-fiscal/nfe/contracts';
+import { CertificateProvider, CertificateData } from 'brasil-fiscal-nfe/contracts';
 
 export class VaultCertificateProvider implements CertificateProvider {
   constructor(private readonly vaultUrl: string, private readonly secretId: string) {}
@@ -51,7 +51,7 @@ const nfe = NFeCore.create({
 Exemplo: provider que usa um proxy interno para comunicacao com a SEFAZ.
 
 ```typescript
-import { SefazTransport, SefazRequest, SefazResponse } from '@brasil-fiscal/nfe/contracts';
+import { SefazTransport, SefazRequest, SefazResponse } from 'brasil-fiscal-nfe/contracts';
 
 export class ProxySefazTransport implements SefazTransport {
   constructor(private readonly proxyUrl: string) {}
@@ -82,8 +82,8 @@ export class ProxySefazTransport implements SefazTransport {
 Exemplo: provider que gera XML usando uma lib externa.
 
 ```typescript
-import { XmlBuilder } from '@brasil-fiscal/nfe/contracts';
-import { NFe } from '@brasil-fiscal/nfe/domain';
+import { XmlBuilder } from 'brasil-fiscal-nfe/contracts';
+import { NFe } from 'brasil-fiscal-nfe/domain';
 
 export class CustomXmlBuilder implements XmlBuilder {
   build(nfe: NFe): string {
@@ -106,7 +106,7 @@ export class CustomXmlBuilder implements XmlBuilder {
 
 Se voce criar um provider util para a comunidade, considere publicar como pacote npm:
 
-- Nome sugerido: `@brasil-fiscal/nfe-provider-<nome>`
-- Adicione `@brasil-fiscal/nfe` como `peerDependency`
+- Nome sugerido: `brasil-fiscal-nfe-provider-<nome>`
+- Adicione `brasil-fiscal-nfe` como `peerDependency`
 - Inclua testes e documentacao
 - Abra uma issue no repositorio principal para ser listado no README

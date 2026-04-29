@@ -1,6 +1,6 @@
 # Examples — Exemplos de Uso
 
-Exemplos completos de como usar a lib `@brasil-fiscal/nfe`.
+Exemplos completos de como usar a lib `brasil-fiscal-nfe`.
 
 > **Nota:** Estes exemplos usam a API planejada para v1. Alguns metodos podem ainda nao estar implementados. Consulte o [ROADMAP](../ROADMAP.md) para o status atual.
 
@@ -9,9 +9,9 @@ Exemplos completos de como usar a lib `@brasil-fiscal/nfe`.
 ## 1. Setup basico
 
 ```typescript
-import { NFeCore } from '@brasil-fiscal/nfe';
-import { A1CertificateProvider } from '@brasil-fiscal/nfe/providers/certificate-a1';
-import { NodeHttpSefazTransport } from '@brasil-fiscal/nfe/providers/sefaz-node-http';
+import { NFeCore } from 'brasil-fiscal-nfe';
+import { A1CertificateProvider } from 'brasil-fiscal-nfe/providers/certificate-a1';
+import { NodeHttpSefazTransport } from 'brasil-fiscal-nfe/providers/sefaz-node-http';
 import { readFileSync } from 'node:fs';
 
 const nfe = NFeCore.create({
@@ -164,7 +164,7 @@ import {
   CertificateError,
   SefazRejectError,
   NFeError
-} from '@brasil-fiscal/nfe/errors';
+} from 'brasil-fiscal-nfe/errors';
 
 try {
   const xml = nfe.xml.generate(nfeData);
@@ -195,7 +195,7 @@ try {
 ## 5. Usando providers customizados
 
 ```typescript
-import { NFeCore } from '@brasil-fiscal/nfe';
+import { NFeCore } from 'brasil-fiscal-nfe';
 import { VaultCertificateProvider } from './providers/vault-certificate';
 import { ProxySefazTransport } from './providers/proxy-sefaz';
 

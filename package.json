@@ -51,10 +51,19 @@
     "@typescript-eslint/parser": "^8.58.2",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
+    "pdfkit": "^0.18.0",
     "prettier": "^3.8.3",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "pdfkit": ">=0.13.0"
+  },
+  "peerDependenciesMeta": {
+    "pdfkit": {
+      "optional": true
+    }
   },
   "dependencies": {
     "zod": "^4.3.6"

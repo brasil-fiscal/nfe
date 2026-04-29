@@ -45,6 +45,8 @@ export type { EventoResult } from './application/use-cases/CancelaNFeUseCase';
 export { CartaCorrecaoUseCase } from './application/use-cases/CartaCorrecaoUseCase';
 export { InutilizaNFeUseCase } from './application/use-cases/InutilizaNFeUseCase';
 export type { InutilizacaoResult } from './application/use-cases/InutilizaNFeUseCase';
+export { ManifestacaoUseCase } from './application/use-cases/ManifestacaoUseCase';
+export type { ManifestacaoResult, TipoManifestacao } from './application/use-cases/ManifestacaoUseCase';
 
 // SEFAZ URLs
 export { getSefazUrl, ibgeToUf, UF_AUTORIZADOR, AUTORIZADOR_URLS } from './shared/constants/sefaz-urls';

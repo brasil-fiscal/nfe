@@ -1,6 +1,6 @@
 import { NFeError } from '@nfe/shared/errors/NFeError';
 
-export type AnService = 'NFeDistribuicaoDFe';
+export type AnService = 'NFeDistribuicaoDFe' | 'RecepcaoEvento';
 export type AnEnvironment = 'homologacao' | 'producao';
 
 /**
@@ -10,10 +10,12 @@ export type AnEnvironment = 'homologacao' | 'producao';
  */
 const AN_URLS: Record<AnEnvironment, Record<AnService, string>> = {
   homologacao: {
-    NFeDistribuicaoDFe: 'https://hom1.nfe.fazenda.gov.br/NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx'
+    NFeDistribuicaoDFe: 'https://hom1.nfe.fazenda.gov.br/NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx',
+    RecepcaoEvento: 'https://hom1.nfe.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx'
   },
   producao: {
-    NFeDistribuicaoDFe: 'https://www1.nfe.fazenda.gov.br/NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx'
+    NFeDistribuicaoDFe: 'https://www1.nfe.fazenda.gov.br/NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx',
+    RecepcaoEvento: 'https://www.nfe.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx'
   }
 };
 

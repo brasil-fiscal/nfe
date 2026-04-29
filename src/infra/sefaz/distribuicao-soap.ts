@@ -23,7 +23,8 @@ export function buildDistNSUEnvelope(
     '<soap12:Envelope xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">',
     '<soap12:Header/>',
     '<soap12:Body>',
-    `<nfeDadosMsg xmlns="${WSDL_NAMESPACE}">`,
+    `<nfeDistDFeInteresse xmlns="${WSDL_NAMESPACE}">`,
+    '<nfeDadosMsg>',
     `<distDFeInt versao="1.01" xmlns="${NFE_NAMESPACE}">`,
     `<tpAmb>${tpAmb}</tpAmb>`,
     `<cUFAutor>${cUFAutor}</cUFAutor>`,
@@ -31,6 +32,7 @@ export function buildDistNSUEnvelope(
     `<distNSU><ultNSU>${nsuPadded}</ultNSU></distNSU>`,
     '</distDFeInt>',
     '</nfeDadosMsg>',
+    '</nfeDistDFeInteresse>',
     '</soap12:Body>',
     '</soap12:Envelope>'
   ].join('');
@@ -50,7 +52,8 @@ export function buildConsChNFeEnvelope(
     '<soap12:Envelope xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">',
     '<soap12:Header/>',
     '<soap12:Body>',
-    `<nfeDadosMsg xmlns="${WSDL_NAMESPACE}">`,
+    `<nfeDistDFeInteresse xmlns="${WSDL_NAMESPACE}">`,
+    '<nfeDadosMsg>',
     `<distDFeInt versao="1.01" xmlns="${NFE_NAMESPACE}">`,
     `<tpAmb>${tpAmb}</tpAmb>`,
     `<cUFAutor>${cUFAutor}</cUFAutor>`,
@@ -58,6 +61,7 @@ export function buildConsChNFeEnvelope(
     `<consChNFe><chNFe>${chNFe}</chNFe></consChNFe>`,
     '</distDFeInt>',
     '</nfeDadosMsg>',
+    '</nfeDistDFeInteresse>',
     '</soap12:Body>',
     '</soap12:Envelope>'
   ].join('');

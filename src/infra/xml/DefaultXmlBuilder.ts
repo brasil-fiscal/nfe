@@ -38,7 +38,8 @@ export class DefaultXmlBuilder implements XmlBuilder {
 
     const ide = this.buildIde(nfe, cUF, dataEmissao, tipoEmissao, codigoNumerico, cDV, modelo);
     const emit = this.buildEmitente(nfe.emitente);
-    const dest = this.buildDestinatario(nfe.destinatario);
+    const ambiente = (nfe.identificacao.ambiente ?? 2) as 1 | 2;
+    const dest = this.buildDestinatario(nfe.destinatario, ambiente);
     const det = this.buildProdutos(nfe.produtos);
     const total = this.buildTotais(nfe);
     const transp = this.buildTransporte(nfe.transporte);
@@ -81,7 +82,7 @@ export class DefaultXmlBuilder implements XmlBuilder {
   ): string {
     const id = nfe.identificacao;
     const tipoImpressao = id.tipoImpressao ?? 1;
-    const tpAmb = '2'; // homologacao por padrao; sera configuravel
+    const tpAmb = String(id.ambiente ?? 2);
 
     return tagGroup(
       'ide',
@@ -123,14 +124,17 @@ export class DefaultXmlBuilder implements XmlBuilder {
     );
   }
 
-  private buildDestinatario(dest: DestinatarioProps): string {
+  private buildDestinatario(dest: DestinatarioProps, tpAmb: 1 | 2): string {
     const doc = dest.cnpj ? tag('CNPJ', dest.cnpj) : tag('CPF', dest.cpf);
     const endereco = this.buildEndereco('enderDest', dest.endereco);
+    const xNome = tpAmb === 2
+      ? 'NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL'
+      : dest.nome;
 
     return tagGroup(
       'dest',
       doc +
-        tag('xNome', dest.nome) +
+        tag('xNome', xNome) +
         endereco +
         tag('indIEDest', String(dest.indicadorIE)) +
         tag('IE', dest.inscricaoEstadual) +

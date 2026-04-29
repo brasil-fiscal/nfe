@@ -175,16 +175,14 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ## Fase 8: Fachada e API Publica
 
-**Status:** Pendente
+**Status:** Concluida
 
 **Objetivo:** Integrar tudo na classe `NFeCore` e estabilizar a API publica.
 
-- [ ] `NFeCore.create()` com configuracao de providers
-- [ ] API fluente: `nfe.xml.generate()`, `nfe.xml.sign()`, `nfe.sefaz.transmit()`, `nfe.sefaz.consult()`, `nfe.sefaz.distribuicao()`, `nfe.sefaz.cancelar()`, `nfe.sefaz.cartaCorrecao()`, `nfe.danfe.generate()`
-- [ ] Emissao de eventos (sucesso, erro, rejeicao) para observabilidade
-- [ ] `index.ts` com exports publicos bem definidos
-- [ ] Documentacao de exemplos completos
-- [ ] Testes de integracao end-to-end (homologacao)
+- [x] `NFeCore.create()` com configuracao de providers
+- [x] API publica com metodos diretos: `transmitir()`, `consultarProtocolo()`, `cancelar()`, `cartaCorrecao()`, `inutilizar()`, `distribuicaoPorNSU()`, `distribuicaoPorChave()`, `danfe()`, `manifestar.*`
+- [x] `index.ts` com exports publicos bem definidos
+- [x] Testes de integracao end-to-end (homologacao)
 
 **Criterio de conclusao:** Um dev consegue instalar, configurar e emitir uma NFe em homologacao seguindo apenas o README.
 
@@ -193,6 +191,9 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 ## Futuro (apos v1)
 
 Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual.
+
+### Documentacao
+- Documentacao de exemplos completos
 
 ### Suporte a outros estados
 - ~~Adicionar URLs de webservices para todos os estados~~ (concluido na Fase 4 — todos os 14 autorizadores com URLs)

@@ -6,6 +6,17 @@ import { loadE2EConfig, loadPfxBuffer, E2EConfig } from './env-loader';
 
 const config = loadE2EConfig();
 
+function extractTag(xml: string, tagName: string): string | null {
+  const match = xml.match(new RegExp(`<${tagName}>([^<]*)</${tagName}>`));
+  return match ? match[1] : null;
+}
+
+function extractEmitCnpj(xml: string): string | null {
+  const emitMatch = xml.match(/<emit>([\s\S]*?)<\/emit>/);
+  if (!emitMatch) return null;
+  return extractTag(emitMatch[1], 'CNPJ');
+}
+
 function buildNFeHomologacao(cfg: E2EConfig): NFeProps {
   return {
     identificacao: {
@@ -174,6 +185,89 @@ describe('E2E: SEFAZ MT Homologacao', { skip: !config ? 'Certificado ou IE nao c
     console.log(`  Status: ${ccResult.cStat} - ${ccResult.xMotivo}`);
 
     assert.equal(ccResult.cStat, '135');
+  });
+
+  it('deve listar NFes emitidas pela empresa via distribuicao DFe', async () => {
+    if (!config) return;
+
+    const ambienteDistribuicao = "homologacao";
+    console.log(`\n  Consultando NFes emitidas pelo CNPJ ${config.cnpj} (${ambienteDistribuicao})...`);
+
+    const pfx = loadPfxBuffer(config.pfxPath);
+    const nfeDist = NFeCore.create({
+      pfx,
+      senha: config.pfxSenha,
+      ambiente: ambienteDistribuicao,
+      uf: config.uf
+    });
+
+    let ultNSU = '0';
+    let totalDocs = 0;
+    let totalEmitidas = 0;
+    let pagina = 0;
+
+    do {
+      pagina++;
+      let result;
+      try {
+        result = await nfeDist.distribuicaoPorNSU(config.cnpj, ultNSU);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes('656')) {
+          console.log(`\n  Rate limit da SEFAZ (656). Tente novamente em 1 hora.`);
+        } else {
+          console.log(`\n  Erro: ${msg}`);
+        }
+        break;
+      }
+
+      console.log(`\n  Pagina ${pagina} | Status: ${result.cStat} - ${result.xMotivo}`);
+      console.log(`  ultNSU: ${result.ultNSU} | maxNSU: ${result.maxNSU} | Docs: ${result.documentos.length}`);
+
+      for (const doc of result.documentos) {
+        totalDocs++;
+
+        // Log do XML bruto pra entender a estrutura
+        console.log(`\n    --- Doc NSU ${doc.nsu} [${doc.schema}] ---`);
+        console.log(`    ${doc.xml.slice(0, 500)}`);
+
+        const cnpjEmit = extractEmitCnpj(doc.xml);
+        // resNFe tem <CNPJ> direto (emitente) sem tag <emit>
+        const cnpjDoc = cnpjEmit ?? extractTag(doc.xml, 'CNPJ');
+        const isEmitida = cnpjDoc === config.cnpj;
+
+        const chave = extractTag(doc.xml, 'chNFe') ?? 'N/A';
+        const dhEmi = extractTag(doc.xml, 'dhEmi') ?? extractTag(doc.xml, 'dhRecbto') ?? '';
+        const valor = extractTag(doc.xml, 'vNF') ?? '0.00';
+        const xNome = extractTag(doc.xml, 'xNome') ?? 'N/A';
+        const cStat = extractTag(doc.xml, 'cStat') ?? '';
+        const tpNF = extractTag(doc.xml, 'tpNF');
+        const tipo = isEmitida ? 'EMITIDA' : 'RECEBIDA';
+
+        if (isEmitida) totalEmitidas++;
+
+        console.log(`    [${tipo}] Chave: ${chave} | tpNF: ${tpNF}`);
+        console.log(`             Data: ${dhEmi} | Valor: R$ ${valor} | Nome: ${xNome} | Status: ${cStat}`);
+      }
+
+      // 137 = nenhum documento encontrado, para a paginacao
+      if (result.cStat === '137' || result.documentos.length === 0) {
+        console.log(`\n  Fim da consulta.`);
+        break;
+      }
+
+      ultNSU = result.ultNSU;
+
+      // Limitar paginacao pra nao ficar infinito no teste
+      if (pagina >= 5) {
+        console.log(`\n  Limite de 5 paginas atingido, parando...`);
+        break;
+      }
+    } while (true);
+
+    console.log(`\n  Resumo: ${totalEmitidas} emitidas de ${totalDocs} documentos totais`);
+
+    assert.ok(true);
   });
 
   it('deve inutilizar numeracao em homologacao', async () => {

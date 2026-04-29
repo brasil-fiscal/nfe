@@ -116,6 +116,15 @@ export class NFeCore {
   }
 
   async transmitir(nfe: NFeProps): Promise<TransmitResult> {
+    const ambiente = (nfe.identificacao?.ambiente ?? (this.environment === 'production' ? 1 : 2)) as 1 | 2;
+    const nfeComAmbiente: NFeProps = {
+      ...nfe,
+      identificacao: {
+        ...nfe.identificacao,
+        ambiente
+      }
+    };
+
     const useCase = new TransmitNFeUseCase({
       xmlBuilder: this.xmlBuilder,
       xmlSigner: this.xmlSigner,
@@ -124,7 +133,7 @@ export class NFeCore {
       environment: this.environment,
       uf: this.uf
     });
-    return useCase.execute(nfe);
+    return useCase.execute(nfeComAmbiente);
   }
 
   async consultarProtocolo(chaveAcesso: string): Promise<ConsultResult> {

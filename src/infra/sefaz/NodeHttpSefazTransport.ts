@@ -23,7 +23,7 @@ export class NodeHttpSefazTransport implements SefazTransport {
           path: url.pathname + url.search,
           method: 'POST',
           headers: {
-            'Content-Type': 'application/soap+xml; charset=utf-8',
+            'Content-Type': `application/soap+xml; charset=utf-8; action="${req.soapAction}"`,
             'SOAPAction': req.soapAction,
             'Content-Length': Buffer.byteLength(req.xml, 'utf-8')
           },
@@ -45,7 +45,7 @@ export class NodeHttpSefazTransport implements SefazTransport {
 
             if (statusCode < 200 || statusCode >= 300) {
               reject(
-                new NFeError(`Erro HTTP ${statusCode} ao comunicar com SEFAZ`)
+                new NFeError(`Erro HTTP ${statusCode} ao comunicar com SEFAZ: ${body.slice(0, 500)}`)
               );
               return;
             }

@@ -138,16 +138,18 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ## Fase 6: Manifestacao do Destinatario
 
-**Status:** Pendente
+**Status:** Concluida
 
 **Objetivo:** Permitir que o destinatario manifeste-se sobre NFes recebidas via `RecepcaoEvento` do AN.
 
-- [ ] Confirmacao da operacao (evento tipo 210200)
-- [ ] Ciencia da operacao (evento tipo 210210)
-- [ ] Desconhecimento da operacao (evento tipo 210220)
-- [ ] Operacao nao realizada (evento tipo 210240)
-- [ ] `ManifestacaoUseCase` com metodos para cada tipo de evento
-- [ ] Testes unitarios com respostas mockadas
+- [x] Confirmacao da operacao (evento tipo 210200)
+- [x] Ciencia da operacao (evento tipo 210210)
+- [x] Desconhecimento da operacao (evento tipo 210220)
+- [x] Operacao nao realizada (evento tipo 210240)
+- [x] `ManifestacaoUseCase` com `confirmar()`, `ciencia()`, `desconhecer()`, `naoRealizada()`
+- [x] URL do `RecepcaoEvento` do AN (homologacao e producao)
+- [x] Validacao de justificativa obrigatoria para desconhecimento e nao realizada
+- [x] 22 testes novos (165 testes totais passando)
 
 **Criterio de conclusao:** Manifestacao de todos os tipos funcionando em homologacao.
 

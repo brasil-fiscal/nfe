@@ -119,16 +119,18 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ## Fase 5: Eventos NFe
 
-**Status:** Pendente
+**Status:** Concluida
 
 **Objetivo:** Cancelamento, Carta de Correcao e Inutilizacao de numeracao via servico `RecepcaoEvento` da SEFAZ.
 
-- [ ] Envelope SOAP para `RecepcaoEvento4` (evento generico)
-- [ ] `CancelaNFeUseCase` — cancelamento de NFe (evento tipo 110111)
-- [ ] `CartaCorrecaoUseCase` — CC-e (evento tipo 110110)
-- [ ] `InutilizaNFeUseCase` — inutilizacao de numeracao via `NFeInutilizacao4`
-- [ ] Parse das respostas de eventos (protocolo, status)
-- [ ] Testes unitarios com respostas mockadas
+- [x] Envelope SOAP para `RecepcaoEvento4` (cancelamento e CC-e) e `NFeInutilizacao4`
+- [x] `CancelaNFeUseCase` — cancelamento de NFe (evento tipo 110111)
+- [x] `CartaCorrecaoUseCase` — CC-e (evento tipo 110110, com sequencia de eventos)
+- [x] `InutilizaNFeUseCase` — inutilizacao de numeracao via `NFeInutilizacao4`
+- [x] Parse das respostas de eventos (protocolo, status)
+- [x] `DefaultXmlSigner` generalizado para assinar `infNFe`, `infEvento` e `infInut`
+- [x] URLs de `RecepcaoEvento` e `NFeInutilizacao` para todos os 14 autorizadores
+- [x] 25 testes novos (143 testes totais passando)
 
 **Criterio de conclusao:** Cancelamento e CC-e funcionando em homologacao.
 

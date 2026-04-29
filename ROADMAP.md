@@ -203,6 +203,11 @@ Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual
 - `@brasil-fiscal/cte` — CTe (Conhecimento de Transporte Eletronico)
 - `@brasil-fiscal/mdfe` — MDFe (Manifesto Eletronico de Documentos Fiscais)
 
+### Transparencia Fiscal (Lei 12.741/2012)
+- Helper `calcularTributosAproximados(produtos, tabelaIBPT)` que calcula valor aproximado dos tributos por NCM
+- Integracao com tabela IBPT (atualizada semestralmente)
+- Gera texto automatico para `informacoesFisco`: "Valor Aprox dos Tributos R$ X.XXX,XX (XX,XX%) Fonte: IBPT"
+
 ### Certificado A3
 - Suporte a smartcard/token via PKCS#11
 

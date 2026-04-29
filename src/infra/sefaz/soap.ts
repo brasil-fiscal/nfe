@@ -115,7 +115,8 @@ export function parseAutorizacaoResponse(body: string): AutorizacaoResult {
     xMotivo: extractTag(proto, 'xMotivo') ?? 'Motivo desconhecido',
     nProt: extractTag(proto, 'nProt') ?? undefined,
     dhRecbto: extractTag(proto, 'dhRecbto') ?? undefined,
-    chNFe: extractTag(proto, 'chNFe') ?? undefined
+    chNFe: extractTag(proto, 'chNFe') ?? undefined,
+    xmlProtocolado: protNFe[0] ? `<protNFe versao="4.00">${proto}</protNFe>` : undefined
   };
 }
 

@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "test": "tsx --test tests/**/*.spec.ts",
     "test:e2e": "tsx --test tests/e2e/*.e2e.ts",
+    "emitir": "tsx tests/e2e/emitir-danfe.ts",
     "prepublishOnly": "npm run build",
     "publish:npm": "npm publish --access public --registry=https://registry.npmjs.org",
     "publish:github": "npm publish --registry=https://npm.pkg.github.com",

@@ -52,17 +52,30 @@ export class TransmitNFeUseCase {
     const result = parseAutorizacaoResponse(body);
 
     if (result.cStat === '100') {
+      const nfeProc = this.buildNfeProc(signedXml, result.xmlProtocolado);
       return {
         autorizada: true,
         protocolo: result.nProt,
         chaveAcesso: result.chNFe ?? '',
         codigoStatus: result.cStat,
         motivo: result.xMotivo,
-        xmlProtocolado: result.xmlProtocolado,
+        xmlProtocolado: nfeProc,
         dataAutorizacao: result.dhRecbto ? new Date(result.dhRecbto) : undefined
       };
     }
 
     throw new SefazRejectError(result.cStat, result.xMotivo, uf);
+  }
+
+  private buildNfeProc(signedNFe: string, protNFe?: string): string | undefined {
+    if (!protNFe) return undefined;
+    const nfeContent = signedNFe.replace(/<\?xml[^?]*\?>\s*/g, '');
+    return (
+      '<?xml version="1.0" encoding="UTF-8"?>' +
+      '<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">' +
+      nfeContent +
+      protNFe +
+      '</nfeProc>'
+    );
   }
 }

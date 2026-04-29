@@ -47,6 +47,8 @@ export { InutilizaNFeUseCase } from './application/use-cases/InutilizaNFeUseCase
 export type { InutilizacaoResult } from './application/use-cases/InutilizaNFeUseCase';
 export { ManifestacaoUseCase } from './application/use-cases/ManifestacaoUseCase';
 export type { ManifestacaoResult, TipoManifestacao } from './application/use-cases/ManifestacaoUseCase';
+export { GerarDanfeUseCase } from './application/use-cases/GerarDanfeUseCase';
+export type { DanfeData } from './application/use-cases/GerarDanfeUseCase';
 
 // SEFAZ URLs
 export { getSefazUrl, ibgeToUf, UF_AUTORIZADOR, AUTORIZADOR_URLS } from './shared/constants/sefaz-urls';

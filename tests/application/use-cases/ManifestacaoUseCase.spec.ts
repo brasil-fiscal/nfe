@@ -156,14 +156,14 @@ describe('ManifestacaoUseCase', () => {
     it('deve usar URL do Ambiente Nacional', async () => {
       let capturedUrl = '';
       const useCase = new ManifestacaoUseCase({
-        certificate: { load: async () => fakeCert },
+        certificate: { load: async (): Promise<CertificateData> => fakeCert },
         transport: {
-          send: async (req) => {
+          send: async (req): Promise<{ xml: string; statusCode: number }> => {
             capturedUrl = req.url;
             return { xml: buildSoapResponse('135', 'OK'), statusCode: 200 };
           }
         },
-        xmlSigner: { sign: (xml: string) => xml },
+        xmlSigner: { sign: (xml: string): string => xml },
         environment: 'homologation'
       });
 

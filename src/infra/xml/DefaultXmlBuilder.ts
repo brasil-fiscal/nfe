@@ -86,8 +86,8 @@ export class DefaultXmlBuilder implements XmlBuilder {
         tag('cNF', codigoNumerico) +
         tag('natOp', id.naturezaOperacao) +
         tag('mod', modelo) +
-        tag('serie', padLeft(id.serie, 3)) +
-        tag('nNF', padLeft(id.numero, 9)) +
+        tag('serie', String(id.serie)) +
+        tag('nNF', String(id.numero)) +
         tag('dhEmi', formatDate(dataEmissao)) +
         tag('tpNF', String(id.tipoOperacao)) +
         tag('idDest', String(id.destinoOperacao)) +
@@ -100,7 +100,7 @@ export class DefaultXmlBuilder implements XmlBuilder {
         tag('indFinal', String(id.consumidorFinal)) +
         tag('indPres', String(id.presencaComprador)) +
         tag('procEmi', '0') +
-        tag('verProc', 'brasil-fiscal-nfe-1.0')
+        tag('verProc', 'brasil-fiscal-nfe')
     );
   }
 
@@ -229,12 +229,29 @@ export class DefaultXmlBuilder implements XmlBuilder {
   private buildPIS(prod: ProdutoProps): string {
     const pis = prod.pis;
 
-    const isNonTaxable = ['04', '05', '06', '07', '08', '09', '49'].includes(pis.cst);
+    const isNonTaxable = ['04', '05', '06', '07', '08', '09'].includes(pis.cst);
 
     if (isNonTaxable) {
       return tagGroup(
         'PIS',
         tagGroup('PISNT', tag('CST', pis.cst))
+      );
+    }
+
+    const isOutr = ['49', '50', '51', '52', '53', '54', '55', '56',
+      '60', '61', '62', '63', '64', '65', '66', '67',
+      '70', '71', '72', '73', '74', '75', '98', '99'].includes(pis.cst);
+
+    if (isOutr) {
+      return tagGroup(
+        'PIS',
+        tagGroup(
+          'PISOutr',
+          tag('CST', pis.cst) +
+            tag('vBC', formatNumber(pis.baseCalculo || 0, 2)) +
+            tag('pPIS', formatNumber(pis.aliquota || 0, 4)) +
+            tag('vPIS', formatNumber(pis.valor || 0, 2))
+        )
       );
     }
 
@@ -253,12 +270,29 @@ export class DefaultXmlBuilder implements XmlBuilder {
   private buildCOFINS(prod: ProdutoProps): string {
     const cofins = prod.cofins;
 
-    const isNonTaxable = ['04', '05', '06', '07', '08', '09', '49'].includes(cofins.cst);
+    const isNonTaxable = ['04', '05', '06', '07', '08', '09'].includes(cofins.cst);
 
     if (isNonTaxable) {
       return tagGroup(
         'COFINS',
         tagGroup('COFINSNT', tag('CST', cofins.cst))
+      );
+    }
+
+    const isOutr = ['49', '50', '51', '52', '53', '54', '55', '56',
+      '60', '61', '62', '63', '64', '65', '66', '67',
+      '70', '71', '72', '73', '74', '75', '98', '99'].includes(cofins.cst);
+
+    if (isOutr) {
+      return tagGroup(
+        'COFINS',
+        tagGroup(
+          'COFINSOutr',
+          tag('CST', cofins.cst) +
+            tag('vBC', formatNumber(cofins.baseCalculo || 0, 2)) +
+            tag('pCOFINS', formatNumber(cofins.aliquota || 0, 4)) +
+            tag('vCOFINS', formatNumber(cofins.valor || 0, 2))
+        )
       );
     }
 

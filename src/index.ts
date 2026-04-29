@@ -32,6 +32,7 @@ export type {
 export { DefaultXmlBuilder } from './infra/xml/DefaultXmlBuilder';
 export { DefaultXmlSigner } from './infra/xml/DefaultXmlSigner';
 export { A1CertificateProvider } from './infra/certificate/A1CertificateProvider';
+export { XsdSchemaValidator } from './infra/schema/XsdSchemaValidator';
 
 // Errors
 export { NFeError } from './shared/errors/NFeError';

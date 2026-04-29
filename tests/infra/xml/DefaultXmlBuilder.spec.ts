@@ -132,11 +132,11 @@ describe('DefaultXmlBuilder', () => {
     assert.ok(xml.includes('<CSOSN>102</CSOSN>'));
   });
 
-  it('deve conter PIS e COFINS nao tributados', () => {
+  it('deve conter PIS e COFINS outras operacoes para CST 49', () => {
     const xml = builder.build(sampleNFe);
 
-    assert.ok(xml.includes('<PISNT>'));
-    assert.ok(xml.includes('<COFINSNT>'));
+    assert.ok(xml.includes('<PISOutr>'));
+    assert.ok(xml.includes('<COFINSOutr>'));
   });
 
   it('deve conter totais calculados', () => {

@@ -2,6 +2,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@nfe/*": ["src/*"]
+    },
     "sourceMap": false
   },
   "exclude": ["dist", "node_modules", "tests"]

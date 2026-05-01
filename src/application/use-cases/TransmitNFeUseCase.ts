@@ -39,12 +39,18 @@ export class TransmitNFeUseCase {
 
     const xml = xmlBuilder.build(nfe);
     const cert = await certificate.load();
-    const signedXml = xmlSigner.sign(xml, cert);
+    let signedXml = xmlSigner.sign(xml, cert);
 
     const sefazEnv = toSefazEnv(environment);
     const modelo = nfe.identificacao.modelo ?? '55';
     const service = modelo === '65' ? 'NFCeAutorizacao' : 'NFeAutorizacao';
     const url = getSefazUrl(uf, sefazEnv, service);
+
+    // NFC-e: insere infNFeSupl ANTES do envio (apos Signature, antes de </NFe>)
+    if (modelo === '65' && cIdToken && csc) {
+      signedXml = this.insertInfNFeSuplBeforeSend(signedXml, nfe, sefazEnv, uf, cIdToken, csc);
+    }
+
     const envelope = buildAutorizacaoEnvelope(signedXml);
 
     const response = await transport.send({
@@ -59,11 +65,7 @@ export class TransmitNFeUseCase {
     const result = parseAutorizacaoResponse(body);
 
     if (result.cStat === '100') {
-      let nfeProc = this.buildNfeProc(signedXml, result.xmlProtocolado);
-
-      if (modelo === '65' && nfeProc && cIdToken && csc) {
-        nfeProc = this.insertInfNFeSupl(nfeProc, nfe, signedXml, sefazEnv, uf, cIdToken, csc);
-      }
+      const nfeProc = this.buildNfeProc(signedXml, result.xmlProtocolado);
 
       return {
         autorizada: true,
@@ -91,44 +93,47 @@ export class TransmitNFeUseCase {
     );
   }
 
-  private insertInfNFeSupl(
-    nfeProc: string,
-    nfe: NFeProps,
+  private insertInfNFeSuplBeforeSend(
     signedXml: string,
+    nfe: NFeProps,
     sefazEnv: SefazEnvironment,
     uf: string,
     cIdToken: string,
     csc: string
   ): string {
-    const chNFeMatch = nfeProc.match(/<chNFe>(\d{44})<\/chNFe>/);
-    const digValMatch = signedXml.match(/<DigestValue>([^<]+)<\/DigestValue>/);
-    if (!chNFeMatch || !digValMatch) return nfeProc;
+    const idMatch = signedXml.match(/Id="NFe(\d{44})"/);
+    if (!idMatch) return signedXml;
 
+    const chNFe = idMatch[1];
     const tpAmb = String(nfe.identificacao.ambiente ?? 2) as '1' | '2';
+    const tpEmis = nfe.identificacao.tipoEmissao ?? 1;
     const urlQRCode = getNFCeQRCodeUrl(uf, sefazEnv);
     const urlChave = getNFCeConsultaUrl(uf, sefazEnv);
 
     const dest = nfe.destinatario;
     const cDest = dest?.cpf ?? dest?.cnpj ?? '';
 
+    const digValMatch = signedXml.match(/<DigestValue>([^<]+)<\/DigestValue>/);
     const dhEmi = signedXml.match(/<dhEmi>([^<]+)<\/dhEmi>/)?.[1] ?? '';
     const vNF = signedXml.match(/<vNF>([^<]+)<\/vNF>/)?.[1] ?? '0.00';
     const vICMS = signedXml.match(/<vICMS>([^<]+)<\/vICMS>/)?.[1] ?? '0.00';
 
     const qrCodeUrl = buildNFCeQRCodeUrl({
       urlQRCode,
-      chNFe: chNFeMatch[1],
+      chNFe,
       tpAmb,
       cDest,
+      cIdToken,
+      csc,
+      tpEmis,
       dhEmi,
       vNF,
       vICMS,
-      digVal: digValMatch[1],
-      cIdToken,
-      csc
+      digVal: digValMatch?.[1]
     });
 
     const infNFeSupl = buildInfNFeSupl(qrCodeUrl, urlChave);
-    return nfeProc.replace('</NFe>', infNFeSupl + '</NFe>');
+    // infNFeSupl deve ficar entre </infNFe> e <Signature> conforme schema NFe 4.00
+    return signedXml.replace('<Signature', infNFeSupl + '<Signature');
   }
 }

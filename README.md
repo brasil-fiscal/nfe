@@ -273,6 +273,9 @@ Para detalhes completos, veja [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 | **@brasil-fiscal/nfe** | Estavel | NFe e NFC-e (este pacote) |
 | [@brasil-fiscal/cte](https://github.com/brasil-fiscal/cte) | Em desenvolvimento | CTe |
 | [@brasil-fiscal/mdfe](https://github.com/brasil-fiscal/mdfe) | Em desenvolvimento | MDFe |
+| [@brasil-fiscal/sped-fiscal](https://github.com/brasil-fiscal/sped-fiscal) | Em desenvolvimento | EFD ICMS/IPI (SPED Fiscal) |
+| [@brasil-fiscal/sped-contribuicoes](https://github.com/brasil-fiscal/sped-contribuicoes) | Em desenvolvimento | EFD Contribuicoes (PIS/COFINS) |
+| [@brasil-fiscal/sintegra](https://github.com/brasil-fiscal/sintegra) | Em desenvolvimento | SINTEGRA |
 
 ## Documentacao
 

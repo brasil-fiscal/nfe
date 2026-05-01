@@ -61,6 +61,8 @@ export { ManifestacaoUseCase } from './application/use-cases/ManifestacaoUseCase
 export type { ManifestacaoResult, TipoManifestacao } from './application/use-cases/ManifestacaoUseCase';
 export { GerarDanfeUseCase } from './application/use-cases/GerarDanfeUseCase';
 export type { DanfeData } from './application/use-cases/GerarDanfeUseCase';
+export { GerarCupomUseCase } from './application/use-cases/GerarCupomUseCase';
+export type { CupomData } from './application/use-cases/GerarCupomUseCase';
 
 // SEFAZ URLs
 export { getSefazUrl, ibgeToUf, UF_AUTORIZADOR, AUTORIZADOR_URLS } from './shared/constants/sefaz-urls';

@@ -3,7 +3,7 @@ import { encodeCode128C, getBarcodeWidth } from './barcode128';
 import { NFeError } from '@nfe/shared/errors/NFeError';
 
 interface PdfDoc {
-  on(event: string, handler: (...args: never[]) => void): PdfDoc;
+  on(event: string, handler: (...args: unknown[]) => void): PdfDoc;
   end(): void;
   addPage(): PdfDoc;
   fontSize(size: number): PdfDoc;
@@ -47,7 +47,7 @@ export class DanfeGenerator {
     return new Promise((resolve, reject) => {
       const doc = new PDFDocument({ size: 'A4', margin: M, bufferPages: true });
       const chunks: Buffer[] = [];
-      doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+      doc.on('data', (chunk: unknown) => chunks.push(chunk as Buffer));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
       try {

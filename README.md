@@ -1,6 +1,6 @@
 # @brasil-fiscal/nfe
 
-Lib open-source em TypeScript para emissao de **NFe (Nota Fiscal Eletronica)** no Brasil. Arquitetura limpa, zero dependencias de runtime, totalmente plugavel.
+Lib open-source em TypeScript para emissao de **NFe (Nota Fiscal Eletronica)** e **NFC-e (Nota Fiscal de Consumidor Eletronica)** no Brasil. Arquitetura limpa, totalmente plugavel. Parte do ecossistema [`@brasil-fiscal`](https://github.com/brasil-fiscal).
 
 ## Instalacao
 
@@ -14,7 +14,11 @@ Para gerar DANFE (PDF), instale tambem:
 npm install pdfkit
 ```
 
+> O [`@brasil-fiscal/core`](https://github.com/brasil-fiscal/core) eh instalado automaticamente como dependencia — contem certificado digital, assinatura XML, transporte mTLS e helpers compartilhados com CTe e MDFe.
+
 ## Features
+
+### NFe (modelo 55) — Completo
 
 - Geracao de XML da NFe (layout SEFAZ 4.00)
 - Assinatura digital com certificado A1 (.pfx/.p12)
@@ -26,9 +30,17 @@ npm install pdfkit
 - Carta de Correcao (CC-e)
 - Inutilizacao de numeracao
 - Manifestacao do Destinatario (confirmacao, ciencia, desconhecimento, nao realizada)
-- Geracao de DANFE em PDF
+- Geracao de DANFE em PDF (A4 retrato)
 - URLs de todos os 27 estados (14 autorizadores)
 - Providers plugaveis para certificado, transporte, XML e assinatura
+
+### NFC-e (modelo 65) — Em desenvolvimento
+
+- Modelo configuravel (`'55' | '65'`)
+- QR Code da NFC-e (URL com hash SHA1)
+- Campos `qrCode` e `urlChave` no bloco `infNFeSupl`
+- Destinatario opcional (consumidor nao identificado)
+- Cupom termico 80mm com QR Code
 
 ## Quick Start
 
@@ -224,28 +236,43 @@ Para quem precisa de controle total, os providers e use cases individuais tambem
 
 A lib usa o padrao Provider. Cada integracao externa eh uma interface que voce pode substituir:
 
-| Provider | Descricao | Default |
-|----------|-----------|---------|
-| `CertificateProvider` | Carrega certificados digitais | `A1CertificateProvider` (.pfx/.p12) |
-| `SefazTransport` | Comunicacao HTTP com a SEFAZ | `NodeHttpSefazTransport` (mTLS) |
-| `XmlBuilder` | Gera XML a partir das entidades | `DefaultXmlBuilder` |
-| `XmlSigner` | Assina XML com certificado digital | `DefaultXmlSigner` |
+| Provider | Descricao | Default | Origem |
+|----------|-----------|---------|--------|
+| `CertificateProvider` | Carrega certificados digitais | `A1CertificateProvider` (.pfx/.p12) | `@brasil-fiscal/core` |
+| `SefazTransport` | Comunicacao HTTP com a SEFAZ | `NodeHttpSefazTransport` (mTLS) | `@brasil-fiscal/core` |
+| `XmlBuilder` | Gera XML a partir das entidades | `DefaultXmlBuilder` | `@brasil-fiscal/nfe` |
+| `XmlSigner` | Assina XML com certificado digital | `DefaultXmlSigner` | `@brasil-fiscal/core` |
 
 Para criar seu proprio provider, veja [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
 ## Arquitetura
 
+Este pacote usa [`@brasil-fiscal/core`](https://github.com/brasil-fiscal/core) para infraestrutura compartilhada (certificado, assinatura, transporte mTLS, helpers). O core eh reutilizado entre NFe, CTe e MDFe.
+
 ```
-src/
-  core/           Fachada (NFeCore) e tipos
-  domain/         Entidades puras e schemas Zod
-  contracts/      Interfaces dos providers
-  application/    Use cases (transmit, consult, cancel, etc.)
-  infra/          Implementacoes (XML, SOAP, SEFAZ, DANFE)
-  shared/         Constantes (IBGE, CFOP, CST, URLs SEFAZ), helpers, erros
+@brasil-fiscal/core          Certificado A1, XMLDSig, mTLS, CNPJ/CPF, UF codes
+      |
+@brasil-fiscal/nfe           NFe + NFC-e (este pacote)
+      |
+      src/
+        core/                 Fachada (NFeCore) e tipos
+        domain/               Entidades puras e schemas Zod
+        contracts/            Interface XmlBuilder (NFe-especifica)
+        application/          Use cases (transmit, consult, cancel, etc.)
+        infra/                DefaultXmlBuilder, SOAP, DANFE
+        shared/               Constantes (CFOP, CST, URLs SEFAZ)
 ```
 
 Para detalhes completos, veja [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Ecossistema @brasil-fiscal
+
+| Pacote | Status | Descricao |
+|--------|--------|-----------|
+| [@brasil-fiscal/core](https://github.com/brasil-fiscal/core) | Estavel | Infraestrutura compartilhada |
+| **@brasil-fiscal/nfe** | Estavel | NFe e NFC-e (este pacote) |
+| [@brasil-fiscal/cte](https://github.com/brasil-fiscal/cte) | Em desenvolvimento | CTe |
+| [@brasil-fiscal/mdfe](https://github.com/brasil-fiscal/mdfe) | Em desenvolvimento | MDFe |
 
 ## Documentacao
 
@@ -278,7 +305,7 @@ Para regenerar: `npx tsx scripts/generate-examples.ts`
 git clone https://github.com/brasil-fiscal/nfe.git
 cd nfe
 npm install
-npm test        # 200 testes
+npm test
 npm run lint
 npm run build
 ```

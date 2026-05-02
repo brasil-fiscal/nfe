@@ -1,6 +1,6 @@
 {
   "name": "@brasil-fiscal/nfe",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Lib open-source para emissao de NFe (Nota Fiscal Eletronica) em TypeScript. Arquitetura limpa, zero dependencias, plugavel.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -77,7 +77,7 @@
     }
   },
   "dependencies": {
-    "@brasil-fiscal/core": "^1.5.0",
+    "@brasil-fiscal/core": "^1.6.0",
     "zod": "^4.3.6"
   }
 }

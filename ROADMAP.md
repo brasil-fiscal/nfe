@@ -221,16 +221,74 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 
 ---
 
-## Futuro (apos v1)
+## Fase 10: Contingencia e Resiliencia
 
-Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual.
+**Status:** Pendente
+**Depende de:** `@brasil-fiscal/core` (transport com fallback, consulta status)
 
-### Documentacao
-- Documentacao de exemplos completos
+**Objetivo:** Garantir que o sistema continue operando quando a SEFAZ estiver indisponivel.
 
-### Suporte a outros estados
-- ~~Adicionar URLs de webservices para todos os estados~~ (concluido na Fase 4 — todos os 14 autorizadores com URLs)
-- Testes de homologacao por estado
+- [ ] Consulta Status SEFAZ (`NFeStatusServico4`) — verifica se os webservices estao operacionais *(use case no nfe, transport no core)*
+- [ ] Contingencia SVC-AN / SVC-RS — redireciona envio para webservices de contingencia nacionais, ajustando `tpEmis`, `dhCont` e `xJust` no XML
+- [ ] EPEC para NFe mod55 (evento 110140) — emite evento de contingencia quando SEFAZ esta offline
+- [ ] EPEC para NFCe mod65 (SP) — contingencia especifica para Sao Paulo via `RecepcaoEPEC`
+- [ ] Consulta Recibo de Lote (`NFeRetAutorizacao4`) — resultado de lote assincrono (`indSinc=0`)
+
+**Criterio de conclusao:** Sistema capaz de emitir NFe/NFC-e em contingencia quando SEFAZ esta fora.
+
+---
+
+## Fase 11: Servicos Complementares
+
+**Status:** Pendente
+
+**Objetivo:** Implementar servicos auxiliares da SEFAZ que complementam o fluxo principal.
+
+- [ ] Gerenciamento de CSC (`CscNFCe`) — consultar (op=1), solicitar novo (op=2) e revogar (op=3) CSC de NFC-e
+- [ ] Consulta Cadastro (`NfeConsultaCadastro`) — dados de registro fiscal por CNPJ, IE ou CPF
+- [ ] Cancelamento por Substituicao (evento 110112) — cancela NFC-e referenciando a nova que substitui
+- [ ] Manifestacao em Lote — ate 20 eventos de manifestacao em um unico envio SOAP
+- [ ] Tabela cStat completa — codigos de retorno SEFAZ (100-999) com descricao e tipo (sucesso/erro) *(no core, compartilhado)*
+- [ ] Validacao de NFe recebida — verifica assinatura XML + consulta protocolo para detectar adulteracao
+
+**Criterio de conclusao:** Todos os servicos complementares funcionando em homologacao.
+
+---
+
+## Fase 12: Eventos Avancados
+
+**Status:** Pendente
+
+**Objetivo:** Implementar eventos adicionais do ciclo de vida da NFe.
+
+- [ ] Comprovante de Entrega (evento 110130) — registra entrega com hash de imagem, GPS, dados do recebedor
+- [ ] Cancelamento de Comprovante de Entrega (evento 110131)
+- [ ] Insucesso de Entrega (evento 110192) — registra tentativa fracassada de entrega
+- [ ] Cancelamento de Insucesso de Entrega (evento 110193)
+- [ ] Ator Interessado (evento 110150) — autoriza transportador a acessar XML
+- [ ] Conciliacao Financeira (eventos 110750/110751) — registra/cancela conciliacao de pagamentos (NT 2024.002)
+
+**Criterio de conclusao:** Eventos avancados funcionando em homologacao.
+
+---
+
+## Fase 13: QR Code v3 e Reforma Tributaria
+
+**Status:** Pendente
+
+**Objetivo:** Adequacao a novas normas tecnicas da SEFAZ.
+
+- [ ] QR Code v3 (NT 2025.001) — formato simplificado que dispensa CSC para emissao online
+- [ ] Eventos IBS/CBS (NT 2025.002) — pagamento integral, isencao ZFM, apropiacao de credito presumido, etc.
+- [ ] Protocolacao de Eventos — gerar `procEventoNFe` e `procInutNFe` (juntar XML com retorno SEFAZ)
+
+**Criterio de conclusao:** Lib compativel com as NTs mais recentes.
+
+---
+
+## Futuro
+
+Funcionalidades planejadas sem fase definida.
 
 ### Outros documentos fiscais
 - `@brasil-fiscal/cte` — CTe (Conhecimento de Transporte Eletronico)
@@ -242,8 +300,8 @@ Funcionalidades planejadas para versoes futuras. Nao fazem parte do escopo atual
 - Integracao com tabela IBPT (atualizada semestralmente)
 - Gera texto automatico para `informacoesFisco`: "Valor Aprox dos Tributos R$ X.XXX,XX (XX,XX%) Fonte: IBPT"
 
-### Certificado A3
-- Suporte a smartcard/token via PKCS#11
+### Validacao GTIN
+- Validacao de check digit do codigo EAN/GTIN dos produtos
 
 ---
 

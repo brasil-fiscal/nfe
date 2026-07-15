@@ -127,13 +127,15 @@ const NFCE_URLS: Record<string, NFCeUrlConfig> = {
     }
   },
   MT: {
+    // SEFAZ-MT registra as URLs com http:// e compara a string literalmente.
+    // Enviar https:// dispara rejeicao 878 (Endereco da consulta diverge do previsto).
     urlQRCode: {
-      homologacao: 'https://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
-      producao: 'https://www.sefaz.mt.gov.br/nfce/consultanfce'
+      homologacao: 'http://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
+      producao: 'http://www.sefaz.mt.gov.br/nfce/consultanfce'
     },
     urlChave: {
-      homologacao: 'https://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
-      producao: 'https://www.sefaz.mt.gov.br/nfce/consultanfce'
+      homologacao: 'http://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
+      producao: 'http://www.sefaz.mt.gov.br/nfce/consultanfce'
     }
   },
   PA: {

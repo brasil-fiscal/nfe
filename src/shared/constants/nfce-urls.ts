@@ -128,12 +128,12 @@ const NFCE_URLS: Record<string, NFCeUrlConfig> = {
   },
   MT: {
     urlQRCode: {
-      homologacao: 'https://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
-      producao: 'https://www.sefaz.mt.gov.br/nfce/consultanfce'
+      homologacao: 'http://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
+      producao: 'http://www.sefaz.mt.gov.br/nfce/consultanfce'
     },
     urlChave: {
-      homologacao: 'https://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
-      producao: 'https://www.sefaz.mt.gov.br/nfce/consultanfce'
+      homologacao: 'http://homologacao.sefaz.mt.gov.br/nfce/consultanfce',
+      producao: 'http://www.sefaz.mt.gov.br/nfce/consultanfce'
     }
   },
   PA: {

@@ -4,7 +4,7 @@ import { XmlSigner } from '@nfe/contracts/XmlSigner';
 import { NFeEnvironment } from '@nfe/core/types';
 import { NFeError } from '@nfe/shared/errors/NFeError';
 import { SefazRejectError } from '@nfe/shared/errors/SefazRejectError';
-import { getSefazUrl, ibgeToUf, SefazEnvironment } from '@nfe/shared/constants/sefaz-urls';
+import { getEventoUrl, ibgeToUf, SefazEnvironment } from '@nfe/shared/constants/sefaz-urls';
 import { extractSoapBody } from '@nfe/infra/sefaz/soap';
 import { formatDate } from '@nfe/infra/xml/xml-helper';
 import {
@@ -57,7 +57,8 @@ export class CancelaNFeUseCase {
     const envelope = wrapEventoSoapEnvelope(signedXml);
 
     const sefazEnv = toSefazEnv(environment);
-    const url = getSefazUrl(uf, sefazEnv, 'RecepcaoEvento');
+    const modelo = input.chaveAcesso.substring(20, 22);
+    const url = getEventoUrl(uf, sefazEnv, modelo);
 
     const response = await transport.send({
       url,

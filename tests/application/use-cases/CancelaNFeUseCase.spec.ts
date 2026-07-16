@@ -92,6 +92,56 @@ describe('CancelaNFeUseCase', () => {
     );
   });
 
+  it('deve enviar cancelamento de NFC-e (mod65) para o endpoint de NFC-e', async () => {
+    // Chave MT (51) modelo 65 -> deve bater no host nfce.sefaz.mt, nao no de NF-e.
+    const chaveNFCe = '51240412345678000195650010000000011234567890';
+    let capturedUrl = '';
+    const useCase = new CancelaNFeUseCase({
+      certificate: { load: async () => fakeCert },
+      transport: {
+        send: async (req) => {
+          capturedUrl = req.url;
+          return { xml: buildSoapEventoResponse('135', 'Evento registrado', '151240000012345'), statusCode: 200 };
+        }
+      },
+      xmlSigner: { sign: (xml: string) => xml },
+      environment: 'homologation'
+    });
+
+    await useCase.execute({
+      chaveAcesso: chaveNFCe,
+      cnpj: '12345678000195',
+      protocolo: '151240000012345',
+      justificativa: 'Erro na emissao da nota fiscal eletronica'
+    });
+
+    assert.ok(capturedUrl.includes('nfcews'), `esperava endpoint NFC-e, veio: ${capturedUrl}`);
+  });
+
+  it('deve enviar cancelamento de NF-e (mod55) para o endpoint de NF-e', async () => {
+    let capturedUrl = '';
+    const useCase = new CancelaNFeUseCase({
+      certificate: { load: async () => fakeCert },
+      transport: {
+        send: async (req) => {
+          capturedUrl = req.url;
+          return { xml: buildSoapEventoResponse('135', 'Evento registrado', '151240000012345'), statusCode: 200 };
+        }
+      },
+      xmlSigner: { sign: (xml: string) => xml },
+      environment: 'homologation'
+    });
+
+    await useCase.execute({
+      chaveAcesso: CHAVE,
+      cnpj: '12345678000195',
+      protocolo: '151240000012345',
+      justificativa: 'Erro na emissao da nota fiscal eletronica'
+    });
+
+    assert.ok(capturedUrl.includes('/nfews/'), `esperava endpoint NF-e, veio: ${capturedUrl}`);
+  });
+
   it('deve lancar NFeError para chave invalida', async () => {
     const useCase = createUseCase('');
 

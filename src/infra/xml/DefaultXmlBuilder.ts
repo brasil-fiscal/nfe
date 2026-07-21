@@ -205,29 +205,51 @@ export class DefaultXmlBuilder implements XmlBuilder {
 
   private buildICMS(prod: ProdutoProps): string {
     const icms = prod.icms;
+    const orig = tag('orig', String(icms.origem));
 
+    // --- Simples Nacional (CSOSN) ---
     if (icms.csosn) {
+      const csosn = icms.csosn;
+      // Só os CSOSN tributados (com crédito ou tributação própria) carregam vBC/pICMS/vICMS.
+      // Os demais (102/103/300/400 isenção/sem crédito, 500 ICMS já recolhido por ST) são
+      // apenas orig + CSOSN — emitir vBC/pICMS aqui quebra o schema.
+      const tributadoSN = ['101', '201', '900'].includes(csosn);
+      const valores = tributadoSN
+        ? (icms.baseCalculo !== undefined ? tag('vBC', formatNumber(icms.baseCalculo, 2)) : '') +
+          (icms.aliquota !== undefined ? tag('pICMS', formatNumber(icms.aliquota, 2)) : '') +
+          (icms.valor !== undefined ? tag('vICMS', formatNumber(icms.valor, 2)) : '')
+        : '';
+      return tagGroup('ICMS', tagGroup('ICMSSN' + csosn, orig + tag('CSOSN', csosn) + valores));
+    }
+
+    const cst = icms.cst || '00';
+
+    // --- Isento / não tributado / suspensão (40, 41, 50): só orig + CST ---
+    if (['40', '41', '50'].includes(cst)) {
+      return tagGroup('ICMS', tagGroup('ICMS' + cst, orig + tag('CST', cst)));
+    }
+
+    // --- ICMS cobrado anteriormente por ST (CST 60): orig + CST + valores retidos ---
+    // Quando o ERP não rastreia o retido, emite 0.00 (schema-válido para revenda de ST).
+    if (cst === '60') {
       return tagGroup(
         'ICMS',
         tagGroup(
-          'ICMSSN' + icms.csosn,
-          tag('orig', String(icms.origem)) +
-            tag('CSOSN', icms.csosn) +
-            (icms.baseCalculo !== undefined
-              ? tag('vBC', formatNumber(icms.baseCalculo, 2))
-              : '') +
-            (icms.aliquota !== undefined ? tag('pICMS', formatNumber(icms.aliquota, 2)) : '') +
-            (icms.valor !== undefined ? tag('vICMS', formatNumber(icms.valor, 2)) : '')
+          'ICMS60',
+          orig +
+            tag('CST', '60') +
+            tag('vBCSTRet', formatNumber(icms.baseCalculo ?? 0, 2)) +
+            tag('vICMSSTRet', formatNumber(icms.valor ?? 0, 2))
         )
       );
     }
 
-    const cst = icms.cst || '00';
+    // --- Tributado (00, 20, 90, ...): comportamento padrão com base/alíquota/valor ---
     return tagGroup(
       'ICMS',
       tagGroup(
         'ICMS' + cst,
-        tag('orig', String(icms.origem)) +
+        orig +
           tag('CST', cst) +
           tag('modBC', '3') +
           (icms.baseCalculo !== undefined

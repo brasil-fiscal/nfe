@@ -29,6 +29,14 @@ export type IPIProps = {
   readonly cEnq?: string;
 };
 
+export type IBSCBSProps = {
+  readonly cst: string;          // '000' = tributação integral
+  readonly cClassTrib: string;   // classificação tributária (6 díg.), ex. '000001'
+  readonly pIBSUF: number;       // alíquota % IBS de competência da UF
+  readonly pIBSMun: number;      // alíquota % IBS de competência do Município
+  readonly pCBS: number;         // alíquota % CBS
+};
+
 export type ProdutoProps = {
   readonly numero: number;
   readonly codigo: string;
@@ -50,4 +58,5 @@ export type ProdutoProps = {
   readonly pis: PISProps;
   readonly cofins: COFINSProps;
   readonly ipi?: IPIProps;
+  readonly ibsCbs?: IBSCBSProps;
 };

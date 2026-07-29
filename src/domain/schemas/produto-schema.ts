@@ -51,5 +51,12 @@ export const produtoSchema = z.object({
   icms: icmsSchema,
   pis: pisSchema,
   cofins: cofinsSchema,
-  ipi: ipiSchema.optional()
+  ipi: ipiSchema.optional(),
+  ibsCbs: z.object({
+    cst: z.string(),
+    cClassTrib: z.string(),
+    pIBSUF: z.number().min(0),
+    pIBSMun: z.number().min(0),
+    pCBS: z.number().min(0),
+  }).optional()
 });

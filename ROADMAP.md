@@ -279,7 +279,9 @@ Este documento descreve as fases de desenvolvimento do projeto. Cada fase tem um
 **Objetivo:** Adequacao a novas normas tecnicas da SEFAZ.
 
 - [ ] QR Code v3 (NT 2025.001) — formato simplificado que dispensa CSC para emissao online
-- [ ] Eventos IBS/CBS (NT 2025.002) — pagamento integral, isencao ZFM, apropiacao de credito presumido, etc.
+- [x] Grupo IBS/CBS na emissao (item gIBSCBS + total IBSCBSTot) — tributacao integral CST 000, valores por aliquota configuravel
+- [ ] Regimes especiais no item IBS/CBS (diferimento gDif, reducao gRed, monofasico, credito presumido)
+- [ ] Eventos IBS/CBS (NT 2025.002) — pagamento integral, isencao ZFM, apropiacao de credito presumido
 - [ ] Protocolacao de Eventos — gerar `procEventoNFe` e `procInutNFe` (juntar XML com retorno SEFAZ)
 
 **Criterio de conclusao:** Lib compativel com as NTs mais recentes.

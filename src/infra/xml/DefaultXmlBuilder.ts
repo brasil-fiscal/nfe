@@ -199,8 +199,26 @@ export class DefaultXmlBuilder implements XmlBuilder {
     const ipi = this.buildIPI(prod);
     const pis = this.buildPIS(prod);
     const cofins = this.buildCOFINS(prod);
+    const ibscbs = this.buildIBSCBS(prod);
 
-    return tagGroup('imposto', icms + ipi + pis + cofins);
+    return tagGroup('imposto', icms + ipi + pis + cofins + ibscbs);
+  }
+
+  private buildIBSCBS(prod: ProdutoProps): string {
+    const ibs = prod.ibsCbs;
+    if (!ibs) return '';
+    const vBC = prod.valorTotal;
+    const vIBSUF = (ibs.pIBSUF / 100) * vBC;
+    const vIBSMun = (ibs.pIBSMun / 100) * vBC;
+    const vCBS = (ibs.pCBS / 100) * vBC;
+    const gIBSCBS = tagGroup(
+      'gIBSCBS',
+      tag('vBC', formatNumber(vBC, 2)) +
+        tagGroup('gIBSUF', tag('pIBSUF', formatNumber(ibs.pIBSUF, 4)) + tag('vIBSUF', formatNumber(vIBSUF, 2))) +
+        tagGroup('gIBSMun', tag('pIBSMun', formatNumber(ibs.pIBSMun, 4)) + tag('vIBSMun', formatNumber(vIBSMun, 2))) +
+        tagGroup('gCBS', tag('pCBS', formatNumber(ibs.pCBS, 4)) + tag('vCBS', formatNumber(vCBS, 2)))
+    );
+    return tagGroup('IBSCBS', tag('CST', ibs.cst) + tag('cClassTrib', ibs.cClassTrib) + gIBSCBS);
   }
 
   private buildICMS(prod: ProdutoProps): string {
@@ -354,6 +372,11 @@ export class DefaultXmlBuilder implements XmlBuilder {
     let vIPI = 0;
     let vPIS = 0;
     let vCOFINS = 0;
+    let vBCIBSCBS = 0;
+    let vIBSUFTot = 0;
+    let vIBSMunTot = 0;
+    let vCBSTot = 0;
+    let temIbsCbs = false;
 
     for (const prod of nfe.produtos) {
       vProd += prod.valorTotal;
@@ -366,38 +389,74 @@ export class DefaultXmlBuilder implements XmlBuilder {
       vIPI += prod.ipi?.valor || 0;
       vPIS += prod.pis.valor || 0;
       vCOFINS += prod.cofins.valor || 0;
+      if (prod.ibsCbs) {
+        const b = prod.valorTotal;
+        vBCIBSCBS += b;
+        vIBSUFTot += (prod.ibsCbs.pIBSUF / 100) * b;
+        vIBSMunTot += (prod.ibsCbs.pIBSMun / 100) * b;
+        vCBSTot += (prod.ibsCbs.pCBS / 100) * b;
+        temIbsCbs = true;
+      }
     }
 
     const vNF = vProd - vDesc + vFrete + vSeg + vIPI + vOutro;
 
-    return tagGroup(
-      'total',
-      tagGroup(
-        'ICMSTot',
-        tag('vBC', formatNumber(vBC, 2)) +
-          tag('vICMS', formatNumber(vICMS, 2)) +
-          tag('vICMSDeson', '0.00') +
-          tag('vFCPUFDest', '0.00') +
-          tag('vICMSUFDest', '0.00') +
-          tag('vICMSUFRemet', '0.00') +
-          tag('vFCP', '0.00') +
-          tag('vBCST', '0.00') +
-          tag('vST', '0.00') +
-          tag('vFCPST', '0.00') +
-          tag('vFCPSTRet', '0.00') +
-          tag('vProd', formatNumber(vProd, 2)) +
-          tag('vFrete', formatNumber(vFrete, 2)) +
-          tag('vSeg', formatNumber(vSeg, 2)) +
-          tag('vDesc', formatNumber(vDesc, 2)) +
-          tag('vII', '0.00') +
-          tag('vIPI', formatNumber(vIPI, 2)) +
-          tag('vIPIDevol', '0.00') +
-          tag('vPIS', formatNumber(vPIS, 2)) +
-          tag('vCOFINS', formatNumber(vCOFINS, 2)) +
-          tag('vOutro', formatNumber(vOutro, 2)) +
-          tag('vNF', formatNumber(vNF, 2))
-      )
+    const icmsTot = tagGroup(
+      'ICMSTot',
+      tag('vBC', formatNumber(vBC, 2)) +
+        tag('vICMS', formatNumber(vICMS, 2)) +
+        tag('vICMSDeson', '0.00') +
+        tag('vFCPUFDest', '0.00') +
+        tag('vICMSUFDest', '0.00') +
+        tag('vICMSUFRemet', '0.00') +
+        tag('vFCP', '0.00') +
+        tag('vBCST', '0.00') +
+        tag('vST', '0.00') +
+        tag('vFCPST', '0.00') +
+        tag('vFCPSTRet', '0.00') +
+        tag('vProd', formatNumber(vProd, 2)) +
+        tag('vFrete', formatNumber(vFrete, 2)) +
+        tag('vSeg', formatNumber(vSeg, 2)) +
+        tag('vDesc', formatNumber(vDesc, 2)) +
+        tag('vII', '0.00') +
+        tag('vIPI', formatNumber(vIPI, 2)) +
+        tag('vIPIDevol', '0.00') +
+        tag('vPIS', formatNumber(vPIS, 2)) +
+        tag('vCOFINS', formatNumber(vCOFINS, 2)) +
+        tag('vOutro', formatNumber(vOutro, 2)) +
+        tag('vNF', formatNumber(vNF, 2))
     );
+
+    const ibsCbsTot = !temIbsCbs
+      ? ''
+      : tagGroup(
+          'IBSCBSTot',
+          tag('vBCIBSCBS', formatNumber(vBCIBSCBS, 2)) +
+            tagGroup(
+              'gIBS',
+              tagGroup(
+                'gIBSUF',
+                tag('vDif', '0.00') +
+                  tag('vDevTrib', '0.00') +
+                  tag('vIBSUF', formatNumber(vIBSUFTot, 2))
+              ) +
+                tagGroup(
+                  'gIBSMun',
+                  tag('vDif', '0.00') +
+                    tag('vDevTrib', '0.00') +
+                    tag('vIBSMun', formatNumber(vIBSMunTot, 2))
+                ) +
+                tag('vIBS', formatNumber(vIBSUFTot + vIBSMunTot, 2))
+            ) +
+            tagGroup(
+              'gCBS',
+              tag('vDif', '0.00') +
+                tag('vDevTrib', '0.00') +
+                tag('vCBS', formatNumber(vCBSTot, 2))
+            )
+        );
+
+    return tagGroup('total', icmsTot + ibsCbsTot);
   }
 
   private buildTransporte(transp: TransporteProps): string {

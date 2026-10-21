@@ -160,10 +160,7 @@ export class DefaultXmlBuilder implements XmlBuilder {
         tag('tpNFCredito', id.tipoNotaCredito) +
         tag('indFinal', String(id.consumidorFinal)) +
         tag('indPres', String(id.presencaComprador)) +
-        tag(
-          'indIntermed',
-          id.indicadorIntermediador !== undefined ? String(id.indicadorIntermediador) : undefined
-        ) +
+        tag('indIntermed', String(id.indicadorIntermediador ?? 0)) +
         tag('procEmi', '0') +
         tag('verProc', 'brasil-fiscal-nfe') +
         this.buildContingencia(id) +

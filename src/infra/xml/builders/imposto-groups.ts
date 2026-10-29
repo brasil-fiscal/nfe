@@ -255,8 +255,8 @@ export function buildICMS(prod: ProdutoProps): string {
     );
   }
 
-  const grupo = (conteudo: string): string =>
-    tagGroup('ICMS', tagGroup('ICMS' + cst, orig + tag('CST', cst) + conteudo));
+  const grupo = (conteudo: string, nomeGrupo = 'ICMS' + cst): string =>
+    tagGroup('ICMS', tagGroup(nomeGrupo, orig + tag('CST', cst) + conteudo));
 
   switch (cst) {
     case '00':
@@ -290,7 +290,8 @@ export function buildICMS(prod: ProdutoProps): string {
     case '40':
     case '41':
     case '50':
-      return grupo(desoneracao(icms));
+      // XSD exige o nome fixo <ICMS40> pros 3 CSTs, mesmo com CST 41/50 dentro.
+      return grupo(desoneracao(icms), 'ICMS40');
 
     case '51':
       return grupo(
